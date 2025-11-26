@@ -7,9 +7,10 @@ import Feed from './components/Feed';
 import Register from './components/Register';
 import MyPage from './components/MyPage';
 import Menu from './components/Menu';
-import Mui from './components/Mui';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SearchPwd from './components/SearchPwd';
+import PostDetailCard from './components/PostDetailCard';
+import Edit from './components/Edit';
 
 const theme = createTheme({
   palette: {
@@ -41,9 +42,10 @@ function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/mypage" element={<MyPage />} />
-            <Route path="/mui" element={<Mui />} />
+            <Route path="/mypage" element={<MyPage />} />            
             <Route path="/searchpwd" element={<SearchPwd />} />
+            <Route path="/postdetailcard" element={<PostDetailCard />} />
+            <Route path="/edit/:postId" element={<Edit />} />
           </Routes>
         </Box>
       </Box>

@@ -32,12 +32,12 @@ function SearchPwd() {
 
         const param = {
             userId: idRef.current.value,
-            newPassword: newPwd, // 서버에서 bcrypt 등으로 해시 처리
+            pwd: newPwd, // 서버에서 bcrypt 등으로 해시 처리
             token: localStorage.getItem("token"), // 인증용
         };
 
         fetch("http://localhost:3010/user/updatepwd", {
-            method: "POST",
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(param),
         })

@@ -47,11 +47,12 @@ function Login() {
               .then( data => {
                   alert(data.msg);
                   console.log(data);
-                  if(data.result){ // 이 값이 true면
-                    localStorage.setItem("token", data.token); 
-                    // localStorage에 토큰값 저장 (키, 밸류의 형태로 넣어줘야함)
-                    navigate("/feed"); // 페이지 이동                    
-                  }
+                  if(data.result && data.token){ // ★ 이 값은 true고, 토큰이 존재하면
+                    localStorage.setItem("token", data.token); 
+                    // localStorage에 토큰값 저장 (키, 밸류의 형태로 넣어줘야함)
+                    navigate("/feed"); // 페이지 이동                    
+                  }
+                  // 로그인 실패 시에는 alert 후 아무것도 하지 않고 현재 페이지에 머무름
                   
               } )
 

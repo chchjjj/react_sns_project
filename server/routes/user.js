@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => { // 요청하는건 req 안에있음
     try {
         // 1) 먼저 유저 아이디 조회, 그후 해시값 조회 
         // 셀렉트니까 결과 list에 담김-개수 명확하지 않으므로!
-        let sql = "SELECT * FROM PRO_TBL_USER WHERE USERID = ?";
+        let sql = "SELECT * FROM PRO_TBL_USER WHERE USER_ID = ?";
         let [list] = await db.query(sql, [userId]); // [] 안 내용들이 VALUES뒤 물음표에 순차적 들어감
         let msg = "";
         let result = "false";  // success/fail이든 true/false든 상관x
@@ -61,17 +61,17 @@ router.post('/login', async (req, res) => { // 요청하는건 req 안에있음
 
         if(list.length > 0){ // 1개이상 = 일치값이 있다(아이디 존재)
             // 비번 비교하기 (작업이 오래걸릴 수 있으니 await로 비동기 시켜줘야함)
-            let match = await bcrypt.compare(pwd, list[0].pwd) 
+            let match = await bcrypt.compare(pwd, list[0].PASSWORD) 
             // 입력한 pwd의 해시값과 list에 있는 해시화된 pwd와 비교
             // ↓ 결과는 true/false로 리턴됨
             if(match){ 
-                msg = list[0].userId + "님 환영합니다.";
+                msg = list[0].USER_ID + "님 환영합니다.";
                 result = true;   
                 
                 let user = {
                     // 로그인 성공 시 토큰에 넣을 값들 
                     // (추가로 권한 등 필요한 정보 있으면 추가하면됨)
-                    userId : list[0].userId,
+                    userId : list[0].USER_ID,
                     //status : "A" // 권한 하드코딩 (db없어서 일단 하드코딩)
                 };
                 token = jwt.sign(user, JWT_KEY, {expiresIn : '1h'}); 
@@ -85,13 +85,16 @@ router.post('/login', async (req, res) => { // 요청하는건 req 안에있음
             msg = "해당 아이디가 존재하지 않습니다.";
         }
 
-        res.json({
-            // 만약 키 : 밸류 명칭이 동일하면 아래처럼 생략 가능
-            // (다르면 기존처럼 키 : 밸류 형태로 써야함)
-            msg,
-            result,
-            token // 만들은 토큰 전달
-        });
+        // ★ 이 부분 수정: result가 true일 때만 token을 포함하도록 조건 추가 ★
+        let response = {
+            msg,
+            result,
+        };
+        if (result === true) {
+            response.token = token; // 로그인 성공 시에만 토큰을 응답 객체에 추가
+        }
+
+        res.json(response); // 수정된 응답 객체를 전송
     } catch (error) {
         console.log(error);
     } 
@@ -113,14 +116,14 @@ router.get('/:userId', async (req, res) => {
         // 방법2) 조인 쿼리 만들어서 하나로 리턴
         let sql = 
                 "SELECT U.*, IFNULL(T.CNT, 0) cnt " +
-                "FROM TBL_USER U " +
+                "FROM PRO_TBL_USER U " +
                 "LEFT JOIN ( " +
-                "    SELECT USERID, COUNT(*) CNT " +
-                "    FROM TBL_FEED " +
+                "    SELECT USER_ID, COUNT(*) CNT " +
+                "    FROM PRO_TBL_POST " +
                 // "    WHERE USERID = ? " +
-                "    GROUP BY USERID " +
-                ") T ON U.USERID = T.USERID " +
-                "WHERE U.USERID = ?";
+                "    GROUP BY USER_ID " +
+                ") T ON U.USER_ID = T.USER_ID " +
+                "WHERE U.USER_ID = ?";
         let [list] = await db.query(sql, [userId]);        
         res.json({
             user : list[0],
@@ -160,11 +163,10 @@ router.post('/searchpwd', async (req, res) => {
 });
 
 // 비밀번호 변경
-router.put("/:userId", async (req, res) => {
-    const { pwd } = req.body;
-    let { userId } = req.params; // URL 파라미터 사용 
+router.put('/updatepwd', async (req, res) => {
+    const { userId, pwd } = req.body; 
     try {
-        let hashPwd = await bcrypt.hash(pwd, 10)
+        let hashPwd = await bcrypt.hash(pwd.trim(), 10)
         let sql = "UPDATE PRO_TBL_USER SET PASSWORD = ? WHERE USER_ID = ?";
         // select가 아니니 list로 받을 필요 없음
         let result = await db.query(sql, [hashPwd, userId ]); 
