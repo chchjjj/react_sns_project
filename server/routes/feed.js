@@ -4,6 +4,81 @@ const db = require("../db"); // js 확장자는 생략가능(다른 확장자는
 const authMiddleware = require("../auth"); // auth.js에 있는 토큰 검증 함수 쓰기위해
 
 
+// 랜덤피드 조회 (좋아요 포함)
+router.get('/random-feed', async (req, res) => {
+  const { excludeUserId } = req.query;
+
+  try {
+    // 1. 랜덤 게시글 2개 선택 (로그인 사용자는 제외)
+    const sql = `
+      SELECT POST_ID
+      FROM PRO_TBL_POST
+      WHERE USER_ID != ? AND VISIBILITY = 'P'
+      ORDER BY RAND()
+      LIMIT 2
+    `;
+    const [rows] = await db.query(sql, [excludeUserId]);
+    const posts = [];
+
+    for (let row of rows) {
+      const postId = row.POST_ID;
+
+      // 2. 게시글 기본 정보
+      const [postRes] = await db.query(`
+        SELECT POST_ID AS id, USER_ID AS userId, CATEGORY AS type, CONTENT AS content, CDATETIME AS cdatetime
+        FROM PRO_TBL_POST
+        WHERE POST_ID = ?
+      `, [postId]);
+
+      if (postRes.length === 0) continue;
+      const post = postRes[0];
+
+      // 3. 이미지
+      const [imgRows] = await db.query(`
+        SELECT IMG_URL AS imgPath
+        FROM PRO_TBL_POST_IMAGE
+        WHERE POST_ID = ?
+      `, [postId]);
+      post.images = imgRows.map(img => img.imgPath);
+
+      // 4. 감사일기 섹션
+      if (post.type === '감사일기') {
+        const [sectionRows] = await db.query(`
+          SELECT SECTION_ID AS sectionId, SECTION_TYPE AS sectionType, CONTENT AS content
+          FROM PRO_TBL_POST_SECTION
+          WHERE POST_ID = ?
+          ORDER BY SECTION_ID ASC
+        `, [postId]);
+        post.sections = sectionRows;
+      }
+
+      // 5. 좋아요 정보
+      const [likeRows] = await db.query(`
+        SELECT USER_ID
+        FROM PRO_TBL_POST_LIKE
+        WHERE POST_ID = ?
+      `, [postId]);
+
+      post.likeCount = likeRows.length;
+      post.likes = likeRows.map(like => like.USER_ID); // PostDetailCard용 liked 상태 확인용
+
+      posts.push(post);
+    }
+
+    res.json({
+      result: 'success',
+      list: posts
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.json({ result: 'fail', list: [] });
+  }
+});
+
+
+
+
 // 포스트 추가 - 인서트면 민감정보 있을 수 있어 post로 약속(웬만하면)
 // pk가 있는 상태가 아니므로 "/"
 router.post("/", async (req, res) => {
@@ -145,6 +220,7 @@ router.get('/:userId', async (req, res) => {
 })
 
 // 포스팅 상세보기
+// 포스팅 상세보기
 router.get('/post/:postId', async (req, res) => {
     let { postId } = req.params;
 
@@ -175,13 +251,10 @@ router.get('/post/:postId', async (req, res) => {
             WHERE POST_ID = ?
         `;
         let [imgRows] = await db.query(sqlImg, [postId]);
-
-        // post.images = imgRows; // 여러 장일 수 있으니 배열로 넣음
         post.images = imgRows.map(img => img.imgPath);
 
-        // 3. 카테고리가 '감사일기'라면 section 조회
+        // 3. 감사일기 섹션 조회
         if (post.type === '감사일기') {
-
             let sqlSection = `
                 SELECT 
                     SECTION_ID AS sectionId,
@@ -191,10 +264,19 @@ router.get('/post/:postId', async (req, res) => {
                 WHERE POST_ID = ?
                 ORDER BY SECTION_ID ASC
             `;
-
             let [sectionRows] = await db.query(sqlSection, [postId]);
-            post.sections = sectionRows; // 섹션 배열
+            post.sections = sectionRows;
         }
+
+        // 4. 좋아요 정보 추가
+        let sqlLikes = `
+            SELECT USER_ID
+            FROM PRO_TBL_POST_LIKE
+            WHERE POST_ID = ?
+        `;
+        let [likeRows] = await db.query(sqlLikes, [postId]);
+        post.likes = likeRows.map(like => like.USER_ID); // 좋아요 누른 userId 배열
+        post.likeCount = likeRows.length; // 좋아요 개수
 
         res.json({
             post: post,
@@ -206,6 +288,7 @@ router.get('/post/:postId', async (req, res) => {
         res.json({ result: "fail" });
     }
 });
+
 
 
 
@@ -294,6 +377,46 @@ router.put("/:feedId", authMiddleware, async (req, res) => {
         if (conn) conn.release();
     }
 });
+
+
+// 기존 좋아요(하트) 내용 가져오기
+
+
+
+
+// 좋아요(하트) 버튼
+router.post("/like", async (req, res) => {
+    let{postId, userId} = req.body
+    try {
+        let sql = "INSERT INTO PRO_TBL_POST_LIKE VALUES(NULL, ?, ?, NOW())";
+        // PK인데 AI로 자동으로 증가되는거는 NULL로 해도 알아서 순차적 들어감 (리액트에서만?)
+        let result = await db.query(sql, [postId, userId])
+        res.json({
+            result : result,
+            msg : "좋아요 완료"
+        });
+    } catch (error) {
+        console.log("좋아요 에러 발생!");
+    }
+})
+
+// 좋아요(하트) 취소(삭제)
+router.delete("/like/:postId/:userId", async (req, res) => {
+    let {postId, userId} = req.params; // params은 넘어오는 모든 정보 담김
+    try {
+        let sql = "DELETE FROM PRO_TBL_POST_LIKE WHERE POST_ID = ? AND USER_ID = ?";
+        // select가 아니니 list로 받을 필요 없음
+        let result = await db.query(sql, [postId, userId]);
+        res.json({
+            result : result,
+            msg : "좋아요 취소 완료"
+        });
+    } catch (error) {
+        console.log("좋아요 취소 에러 발생!");
+        res.status(500).json({ msg: "좋아요 취소 실패", error });
+    }
+})
+
 
 
 
