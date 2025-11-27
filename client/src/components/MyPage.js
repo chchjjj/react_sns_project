@@ -47,14 +47,15 @@ function MyPage() {
           <Box display="flex" flexDirection="column" alignItems="center" sx={{ marginBottom: 3 }}>
             <Avatar
               alt="프로필 이미지"
-              src="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e" // 프로필 이미지 경로
+              src={user?.PROFILE_IMAGE || ""}
+              // 프로필 이미지 경로
               sx={{ width: 100, height: 100, marginBottom: 2 }}
             />
-            <Typography variant="h5">
+            {/* <Typography variant="h5">
                 {user?.userName}
-            </Typography>
+            </Typography> */}
             <Typography variant="body2" color="text.secondary">
-                @{user?.userId}
+                @{user?.USER_ID}
             </Typography>
           </Box>
           <Grid container spacing={2} sx={{ marginTop: 2 }}>
@@ -71,12 +72,12 @@ function MyPage() {
               <Typography variant="body1">{user?.cnt}</Typography>
             </Grid>
           </Grid>
-          <Box sx={{ marginTop: 3 }}>
+          {/* <Box sx={{ marginTop: 3 }}>
             <Typography variant="h6">내 소개</Typography>
             <Typography variant="body1">
               {user?.intro}
             </Typography>
-          </Box>
+          </Box> */}
         </Paper>
       </Box>
     </Container>

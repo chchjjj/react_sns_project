@@ -147,10 +147,11 @@ function Feed() {
                             onClick={() => handleClickOpen(feed)} 
                             sx={{ 
                                 display: 'flex', 
+                                borderRadius : 10,
                                 alignItems: 'center', // 세로로 중앙 정렬
                                 cursor: 'pointer', 
-                                width : 850,
-                                height: 100, // 카드의 세로 높이 지정 (통통하게)
+                                width : 800,
+                                height: 150, // 카드의 세로 높이 지정 (통통하게)
                                 padding: 2, 
                                 '&:hover': {
                                     backgroundColor: 'action.hover', // 마우스 오버 효과
@@ -235,8 +236,13 @@ function Feed() {
         <DialogContent sx={{ display: 'flex', gap: 3 }}> {/* flex로 좌우 배치, gap으로 여백 */}
             {/* 왼쪽: 게시글 내용 */}
             <Box sx={{ flex: 1 }}> 
-              <PostDetailCard post={selectedFeed} />
+              <PostDetailCard 
+                  post={selectedFeed} 
+                  
+              />              
             </Box>
+        
+
 
             {/* 오른쪽: 댓글 */}
             <Box sx={{ width: '300px' }}>

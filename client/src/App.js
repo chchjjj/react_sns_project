@@ -11,38 +11,49 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SearchPwd from './components/SearchPwd';
 import PostDetailCard from './components/PostDetailCard';
 import Edit from './components/Edit';
+import Edit from './components/Edit';
 
 const theme = createTheme({
   palette: {
-    primary: { main: '#9bd1d8ff' },
-    secondary: { main: '#F8D374' },
-    text: { primary: '#636363' },
-    background: { default: '#FFE697' }
+    primary: { main: '#A67B5B' },          // 브라운 계열
+    secondary: { main: '#F3E0B5' },        // 베이지톤
+    info: { main: '#DDE3A3' },             // 연두 느낌
+    warning: { main: '#FFE07D' },          // 따뜻한 노랑
+    background: { default: 'rgba(243, 224, 181, 0.3)' }, // 투명 베이지
+    text: { primary: '#4B3B3B', secondary: '#6B5E53' }, // 부드러운 브라운
   },
   typography: {
-    fontFamily: 'Pretendard, sans-serif',
-  }
+    fontFamily: 'Pretendard, "Noto Sans KR", sans-serif',
+  },
 });
 
 function App() {
-  const location = useLocation(); // return 밖에서 JS 코드 먼저 실행
-  const isAuthPage = location.pathname === '/' || location.pathname === '/join' || location.pathname === '/searchpwd';
+  const location = useLocation();
+  const isAuthPage =
+    location.pathname === '/' ||
+    location.pathname === '/join' ||
+    location.pathname === '/searchpwd';
 
   return (
-    <ThemeProvider theme={theme}> {/* JSX는 return 안에서 사용 */}
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-
-        {!isAuthPage && <Menu />} 
-        {/* 로그인/회원가입이 아닐 때만 메뉴 표시 */}
-
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {!isAuthPage && <Menu />}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            bgcolor: 'rgba(243, 224, 181, 0.3)',
+            minHeight: '100vh',
+          }}
+        >
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/join" element={<Join />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/mypage" element={<MyPage />} />            
+            <Route path="/mypage" element={<MyPage />} />
             <Route path="/searchpwd" element={<SearchPwd />} />
             <Route path="/postdetailcard" element={<PostDetailCard />} />
             <Route path="/edit/:postId" element={<Edit />} />

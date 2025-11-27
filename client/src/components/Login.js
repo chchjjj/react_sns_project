@@ -8,27 +8,14 @@ function Login() {
   let pwdRef = useRef();
   let navigate = useNavigate();
 
+  const handleKeyUp = (e) => {
+        if (e.key === "Enter") { // 엔터 키 감지
+            signUp(); // 버튼 클릭과 동일한 동작
+        }
+    };
 
-  return (
-    <Container maxWidth="xs">
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <Paper elevation={4} sx={{ p: 4, borderRadius: 3, width: '100%' }}>
-        <Typography variant="h5" gutterBottom>
-          로그인
-        </Typography>
-        
-        {/* TextField는 inputRef 써야함(?) */}
-        <TextField inputRef={idRef} label="ID" variant="outlined" margin="normal" fullWidth />
-        <TextField
-          inputRef={pwdRef}
-          label="Password"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          type="password"
-        />
-        <Button onClick={()=>{
-            let param = {
+  function signUp(){
+    let param = {
                 userId : idRef.current.value,
                 pwd : pwdRef.current.value
             };
@@ -55,8 +42,24 @@ function Login() {
                   // 로그인 실패 시에는 alert 후 아무것도 하지 않고 현재 페이지에 머무름
                   
               } )
+  }
 
-        }} variant="contained" color="primary" style={{ marginTop: '20px', width:'155px' }}>
+
+  return (
+    <Container maxWidth="xs">
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <Paper elevation={4} sx={{ p: 4, borderRadius: 3, width: '100%' }}>
+        <Typography variant="h5" gutterBottom>
+          로그인
+        </Typography>
+        
+        {/* TextField는 inputRef 써야함(?) */}
+        <TextField inputRef={idRef} label="ID" variant="outlined" margin="normal" fullWidth />
+
+        <TextField inputRef={pwdRef} label="Password" variant="outlined"
+          margin="normal" fullWidth type="password" onKeyUp={handleKeyUp} />
+
+        <Button onClick={signUp} variant="contained" color="primary" style={{ marginTop: '20px', width:'155px' }}>
           로그인
         </Button>
 

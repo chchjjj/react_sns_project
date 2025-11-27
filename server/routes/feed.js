@@ -176,7 +176,8 @@ router.get('/post/:postId', async (req, res) => {
         `;
         let [imgRows] = await db.query(sqlImg, [postId]);
 
-        post.images = imgRows; // 여러 장일 수 있으니 배열로 넣음
+        // post.images = imgRows; // 여러 장일 수 있으니 배열로 넣음
+        post.images = imgRows.map(img => img.imgPath);
 
         // 3. 카테고리가 '감사일기'라면 section 조회
         if (post.type === '감사일기') {

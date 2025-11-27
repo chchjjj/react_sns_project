@@ -130,7 +130,7 @@ function Register() {
               .then(data => {
                   console.log(data);
                   alert("게시글이 등록되었습니다.");
-                  //navigate("/feed"); // 원하는 경로
+                  navigate("/feed"); 
               })
               .catch(err => {
                   console.error(err);
@@ -166,7 +166,7 @@ function Register() {
             </RadioGroup>
         </FormControl>
 
-        <TextField label="제목" variant="outlined" margin="normal" fullWidth />
+        {/* <TextField label="제목" variant="outlined" margin="normal" fullWidth /> */}
 
         {/* 💡 조건부 렌더링 적용 시작 */}
         {diaryType === '감사' && ( // 감사일기 전용 내용 입력 필드

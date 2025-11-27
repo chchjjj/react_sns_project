@@ -115,7 +115,7 @@ router.get('/:userId', async (req, res) => {
 
         // 방법2) 조인 쿼리 만들어서 하나로 리턴
         let sql = 
-                "SELECT U.*, IFNULL(T.CNT, 0) cnt " +
+                "SELECT U.*, IFNULL(U.follower, 0) AS follower, IFNULL(U.following, 0) AS following, IFNULL(T.CNT, 0) cnt " +
                 "FROM PRO_TBL_USER U " +
                 "LEFT JOIN ( " +
                 "    SELECT USER_ID, COUNT(*) CNT " +

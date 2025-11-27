@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TextField, Button, Container, Typography, Box, FormControl,
   FormLabel, RadioGroup, FormControlLabel, Radio, Avatar, IconButton
@@ -12,19 +12,19 @@ function Edit() {
   const [diaryType, setDiaryType] = useState('감사');
   const [openType, setOpenType] = useState('H');
   const [existingImages, setExistingImages] = useState([]);
+
+  const [gratitude, setGratitude] = useState('');
+  const [reflection, setReflection] = useState('');
+  const [hope, setHope] = useState('');
+  const [content, setContent] = useState('');
+
   const { postId } = useParams();
   const navigate = useNavigate();
-
-  const contentRef = useRef(null);
-  const gratitudeRef = useRef(null);
-  const reflectionRef = useRef(null);
-  const hopeRef = useRef(null);
 
   const handleFileChange = (e) => setFiles(e.target.files);
   const handleDiaryTypeChange = (e) => setDiaryType(e.target.value);
   const handleOpenTypeChange = (e) => setOpenType(e.target.value);
 
-  // --- 기존 데이터 불러오기 ---
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -32,6 +32,7 @@ function Edit() {
       navigate("/");
       return;
     }
+
     fetch(`http://localhost:3010/feed/post/${postId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -44,11 +45,11 @@ function Edit() {
           setExistingImages(post.images || []);
 
           if (post.type.includes('감사') && post.sections) {
-            gratitudeRef.current.value = post.sections.find(s => s.sectionType === '감사')?.content || '';
-            reflectionRef.current.value = post.sections.find(s => s.sectionType === '반성')?.content || '';
-            hopeRef.current.value = post.sections.find(s => s.sectionType === '소망')?.content || '';
+            setGratitude(post.sections.find(s => s.sectionType === '감사')?.content || '');
+            setReflection(post.sections.find(s => s.sectionType === '반성')?.content || '');
+            setHope(post.sections.find(s => s.sectionType === '소망')?.content || '');
           } else {
-            contentRef.current.value = post.content || '';
+            setContent(post.content || '');
           }
         } else {
           alert("게시글을 불러오지 못했습니다.");
@@ -74,26 +75,26 @@ function Edit() {
     if (diaryType === '감사') {
       postData.content = null;
       sections = [
-        { type: '감사', content: gratitudeRef.current?.value || '' },
-        { type: '반성', content: reflectionRef.current?.value || '' },
-        { type: '소망', content: hopeRef.current?.value || '' },
+        { type: '감사', content: gratitude },
+        { type: '반성', content: reflection },
+        { type: '소망', content: hope },
       ].filter(s => s.content.trim() !== '');
+
       if (sections.length === 0) {
         alert("감사일기는 최소한 하나의 내용을 작성해야 합니다.");
         return;
       }
     } else {
-      postData.content = contentRef.current?.value;
+      postData.content = content;
       if (!postData.content || postData.content.trim() === '') {
         alert("일상일기 내용을 입력해주세요.");
         return;
       }
     }
 
-    // --- 서버 PUT 요청 ---
     fetch(`http://localhost:3010/feed/${postId}`, {
       method: "PUT",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
@@ -102,7 +103,6 @@ function Edit() {
       .then(res => res.json())
       .then(data => {
         if (data.result) {
-          // 이미지 업데이트
           if (files.length > 0) {
             const formData = new FormData();
             for (let i = 0; i < files.length; i++) formData.append("file", files[i]);
@@ -143,14 +143,18 @@ function Edit() {
 
         {diaryType === '감사' && (
           <>
-            <TextField inputRef={gratitudeRef} label="오늘 감사했던 일" variant="outlined" margin="normal" fullWidth multiline rows={4} />
-            <TextField inputRef={reflectionRef} label="오늘 반성했던 일" variant="outlined" margin="normal" fullWidth multiline rows={4} />
-            <TextField inputRef={hopeRef} label="이루고 싶은 소망 또는 목표" variant="outlined" margin="normal" fullWidth multiline rows={4} />
+            <TextField value={gratitude} onChange={e => setGratitude(e.target.value)}
+              label="오늘 감사했던 일" variant="outlined" margin="normal" fullWidth multiline rows={4} />
+            <TextField value={reflection} onChange={e => setReflection(e.target.value)}
+              label="오늘 반성했던 일" variant="outlined" margin="normal" fullWidth multiline rows={4} />
+            <TextField value={hope} onChange={e => setHope(e.target.value)}
+              label="이루고 싶은 소망 또는 목표" variant="outlined" margin="normal" fullWidth multiline rows={4} />
           </>
         )}
 
         {diaryType === '일상' && (
-          <TextField inputRef={contentRef} label="오늘 있었던 일이나 생각" variant="outlined" margin="normal" fullWidth multiline rows={10} />
+          <TextField value={content} onChange={e => setContent(e.target.value)}
+            label="오늘 있었던 일이나 생각" variant="outlined" margin="normal" fullWidth multiline rows={10} />
         )}
 
         <Box display="flex" alignItems="center" margin="normal" fullWidth>
@@ -166,7 +170,6 @@ function Edit() {
             <IconButton color="primary" component="span"><PhotoCamera /></IconButton>
           </label>
 
-          {/* 기존 이미지 미리보기 */}
           {existingImages.length > 0 && (
             <Avatar
               alt="기존 이미지"
@@ -175,7 +178,6 @@ function Edit() {
             />
           )}
 
-          {/* 새로 선택한 이미지 */}
           {files.length > 0 && (
             <Avatar
               alt="첨부된 이미지"
