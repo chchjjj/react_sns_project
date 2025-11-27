@@ -11,7 +11,6 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SearchPwd from './components/SearchPwd';
 import PostDetailCard from './components/PostDetailCard';
 import Edit from './components/Edit';
-import Edit from './components/Edit';
 
 const theme = createTheme({
   palette: {
