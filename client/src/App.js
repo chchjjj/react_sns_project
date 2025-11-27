@@ -11,6 +11,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SearchPwd from './components/SearchPwd';
 import PostDetailCard from './components/PostDetailCard';
 import Edit from './components/Edit';
+import RandomFeed from './components/RandomFeed';
 
 const theme = createTheme({
   palette: {
@@ -56,6 +57,7 @@ function App() {
             <Route path="/searchpwd" element={<SearchPwd />} />
             <Route path="/postdetailcard" element={<PostDetailCard />} />
             <Route path="/edit/:postId" element={<Edit />} />
+            <Route path="/randomfeed" element={<RandomFeed />} />
           </Routes>
         </Box>
       </Box>

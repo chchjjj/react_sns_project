@@ -7,7 +7,7 @@ function Menu() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { text: '피드', icon: <DynamicFeed />, path: '/feed' },
+    { text: '피드', icon: <DynamicFeed />, path: '/randomfeed' },
     { text: '내 게시글', icon: <Home />, path: '/feed' },
     { text: '등록', icon: <Add />, path: '/register' },
     { text: '마이페이지', icon: <AccountCircle />, path: '/mypage' },
