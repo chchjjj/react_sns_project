@@ -78,7 +78,6 @@ router.get('/random-feed', async (req, res) => {
 
 
 
-
 // 포스트 추가 - 인서트면 민감정보 있을 수 있어 post로 약속(웬만하면)
 // pk가 있는 상태가 아니므로 "/"
 router.post("/", async (req, res) => {
@@ -219,7 +218,7 @@ router.get('/:userId', async (req, res) => {
     } 
 })
 
-// 포스팅 상세보기
+
 // 포스팅 상세보기
 router.get('/post/:postId', async (req, res) => {
     let { postId } = req.params;
@@ -377,10 +376,6 @@ router.put("/:feedId", authMiddleware, async (req, res) => {
         if (conn) conn.release();
     }
 });
-
-
-// 기존 좋아요(하트) 내용 가져오기
-
 
 
 

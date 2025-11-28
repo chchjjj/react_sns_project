@@ -1,174 +1,148 @@
-// RandomFeed.js
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Grid, CircularProgress, Typography,IconButton, Avatar  } from '@mui/material';
+import { Box, Button, Grid, CircularProgress, Typography, IconButton, Avatar } from '@mui/material';
 import PostDetailCard from './PostDetailCard';
 import { jwtDecode } from 'jwt-decode';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SendIcon from '@mui/icons-material/Send';
 
-
 const getCurrentUserId = () => {
-  const token = localStorage.getItem('token'); // 로그인 시 저장한 token
-  if (!token) return null;
-  try {
-    const decoded = jwtDecode(token); // { userId: "...", iat, exp }
-    return decoded.userId;
-  } catch (err) {
-    console.error("JWT decode error", err);
-    return null;
-  }
+  const token = localStorage.getItem('token'); 
+  if (!token) return null;
+  try {
+    return jwtDecode(token).userId;
+  } catch (err) {
+    console.error("JWT decode error", err);
+    return null;
+  }
 };
 
 const RandomFeed = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
-   const [followingList, setFollowingList] = useState([]); // 팔로잉 중인 사용자 아이디 목록
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [followingList, setFollowingList] = useState([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
-  const currentUserId = getCurrentUserId();
+  const currentUserId = getCurrentUserId();
 
-  const fetchRandomPosts = () => {
-    if (!currentUserId) {
-      console.error("No currentUserId, cannot fetch random feed");
-      setPosts([]);
-      return;
-    }
-
-    setLoading(true);
-
-    fetch(`http://localhost:3010/feed/random-feed?excludeUserId=${currentUserId}`)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        console.log('Random feed data from server:', data); // 디버깅
-        if (data.result === 'success' && Array.isArray(data.list)) {
-          setPosts(data.list.slice(0, 2)); // 화면에 2개만 표시
-        } else {
-          setPosts([]);
-        }
-      })
-      .catch(err => {
-        console.error('fetch error:', err);
-        setPosts([]);
-      })
-      .finally(() => setLoading(false));
-  };
-
-
-   // 팔로잉/언팔로잉 토글 (샘플 상태)
-  const toggleFollow = (userId) => {
-    setFollowingList((prev) =>
-      prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
+  const fetchRandomPosts = () => {
+    if (!currentUserId) return;
+    setLoading(true);
+    fetch(`http://localhost:3010/feed/random-feed?excludeUserId=${currentUserId}`)
+      .then(res => res.json())
+      .then(data => setPosts(Array.isArray(data.list) ? data.list.slice(0, 2) : []))
+      .catch(err => console.error('fetch error:', err))
+      .finally(() => setLoading(false));
   };
 
-  // 메시지 버튼 클릭
+  const showToastMessage = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 1500);
+  };
+
+  const toggleFollow = (targetUserId) => {
+    const isFollowing = followingList.includes(targetUserId);
+    const url = `http://localhost:3010/user/${isFollowing ? 'unfollow' : 'follow'}`;
+    const method = isFollowing ? 'DELETE' : 'POST';
+    const body = { userId: currentUserId, followId: targetUserId };
+
+    fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+    .then(res => res.json())
+    .then(() => {
+      setFollowingList(prev =>
+        isFollowing ? prev.filter(id => id !== targetUserId) : [...prev, targetUserId]
+      );
+      showToastMessage(isFollowing ? "팔로우 취소" : "팔로우 완료");
+    })
+    .catch(err => console.error(`${isFollowing ? '언팔로우' : '팔로우'} 실패:`, err));
+  };
+
   const sendMessage = (userId) => {
     alert(`${userId}에게 메시지를 보내는 기능은 아직 미구현입니다.`);
   };
 
+  useEffect(() => {
+    if (!currentUserId) return;
+    // 팔로잉 목록 가져오기
+    fetch(`http://localhost:3010/user/${currentUserId}/following`)
+      .then(res => res.json())
+      .then(data => setFollowingList(Array.isArray(data.user) ? data.user.map(item => item.FOLLOWING_ID) : []))
+      .finally(fetchRandomPosts);
+  }, [currentUserId]);
 
-  useEffect(() => {
-    fetchRandomPosts();
-  }, []);
-
-  return (
-    
-    <Box
-      sx={{
-        py: 3,
-        px: 2,
-        backgroundColor: '#f5f5f5',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-
-    
-      {/* 새로고침 버튼 */}
-      <Box sx={{ 
-        display: 'flex',
-          justifyContent: 'space-between', // ⭐ 이 속성으로 왼쪽 정렬(제목)과 오른쪽 정렬(버튼)이 됩니다.
-          alignItems: 'center', 
-          mb: 3, 
-          width: '100%',
-          maxWidth: 900, 
+  return (
+    <Box sx={{ py: 3, px: 1.5, backgroundColor: '#f5f5f5', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      
+      {showToast && (
+        <Box sx={{
+          position: 'fixed',
+          top: '15%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'rgba(0,0,0,0.7)',
+          color: 'white',
+          px: 3,
+          py: 1.5,
+          borderRadius: 2,
+          zIndex: 9999,
+          pointerEvents: 'none'
         }}>
+          {toastMessage}
+        </Box>
+      )}
 
-        <Typography variant="h5" component="h1" fontWeight="bold" sx={{ mr: 2 }}>
-          랜덤 피드 모아보기
-        </Typography>
-        <Button variant="contained" onClick={fetchRandomPosts}>
-          새로고침
-        </Button>
-      </Box>
+      {/* 제목 아래 여유 공간 늘림 */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, width: '100%', maxWidth: 500 }}>
+        <Typography variant="h5" fontWeight="bold">랜덤 피드 모아보기</Typography>
+        <Button variant="contained" size="small" onClick={fetchRandomPosts}>새로고침</Button>
+      </Box>
 
-      {loading ? (
-        <Box sx=
-            {{ display: 'flex', 
-                justifyContent: 'center', 
-                mt: 5 
-            }}>
-          <CircularProgress />
-        </Box>
-      ) : posts.length === 0 ? (
-        <Typography variant="body1" sx={{ mt: 5 }}>
-          랜덤 게시글이 없습니다.
-        </Typography>
-      ) : (
-        <Grid container spacing={2} sx={{ maxWidth: 900 }}>
-          {Array.isArray(posts) &&
-            posts.map((post) => (
-              <Grid item xs={12} md={12} key={post.id}>
-                <Box
-                  sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.75)', // 반투명
-                    borderRadius: 2,
-                    boxShadow: 3,
-                    p: 1.5,
-                  }}
-                >
-
-                {/* 상단: 작성자 + 팔로잉/메시지 */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}><CircularProgress size={24} /></Box>
+      ) : posts.length === 0 ? (
+        <Typography variant="body2" sx={{ mt: 3 }}>랜덤 게시글이 없습니다.</Typography>
+      ) : (
+        // 피드 간격 spacing 2 → 3으로 늘림
+        <Grid container spacing={3} sx={{ maxWidth: 500 }}>
+          {posts.map(post => (
+            <Grid item xs={12} key={post.id}>
+              <Box sx={{
+                width: '100%',
+                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                borderRadius: 2,
+                boxShadow: 2,
+                p: 1.5,
+              }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Avatar sx={{ bgcolor: 'primary.main' }}>
+                    <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32, fontSize: 14 }}>
                       {post.userId.charAt(0).toUpperCase()}
                     </Avatar>
-                    <Typography variant="subtitle1">
-                      {/* {post.type} · {post.userId} */}
-                      {post.userId}
-                    </Typography>
+                    <Typography variant="subtitle2">{post.userId}</Typography>
                   </Box>
                   <Box>
-                    <IconButton onClick={() => toggleFollow(post.userId)}>
-                      {followingList.includes(post.userId) ? (
-                        <PersonRemoveIcon color="primary" />
-                      ) : (
-                        <PersonAddIcon color="primary" />
-                      )}
+                    <IconButton size="small" onClick={() => toggleFollow(post.userId)}>
+                      {followingList.includes(post.userId) ? <PersonRemoveIcon color="primary" fontSize="small" /> : <PersonAddIcon color="primary" fontSize="small" />}
                     </IconButton>
-                    <IconButton onClick={() => sendMessage(post.userId)}>
-                      <SendIcon color="primary" />
+                    <IconButton size="small" onClick={() => sendMessage(post.userId)}>
+                      <SendIcon color="primary" fontSize="small" />
                     </IconButton>
                   </Box>
                 </Box>
-
-                  {/* 게시글 내용 */}
-                  <PostDetailCard post={post} />
-                </Box>
-              </Grid>
-            ))}
-        </Grid>
-      )}
-    </Box>
-  );
+                <PostDetailCard post={post} viewMode="random" />
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Box>
+  );
 };
 
 export default RandomFeed;

@@ -180,5 +180,51 @@ router.put('/updatepwd', async (req, res) => {
 })
 
 
+// 팔로우 추가
+router.post('/follow', async (req, res) => {
+    let{followId, userId} = req.body
+    console.log("userId:", userId, "followId:", followId); // ← 확인
+    try {
+        let sql = "INSERT INTO PRO_TBL_FOLLOW(FOLLOWER_ID, FOLLOWING_ID, CDATETIME) "
+                + "VALUES(?, ?, NOW())";
+        let result = await db.query(sql, [followId, userId]);
+        res.json({
+            result : result,
+            msg : "팔로우 완료"
+        });
+    } catch (error) {
+        console.log(error);
+    } 
+})
+
+
+// 팔로우 삭제(취소)
+router.delete('/unfollow', async (req, res) => {
+  const { userId, followId } = req.body;
+  try {
+    let sql = "DELETE FROM PRO_TBL_FOLLOW WHERE FOLLOWER_ID = ? AND FOLLOWING_ID = ?";
+    await db.query(sql, [userId, followId]);
+    res.json({ msg: "언팔로우 완료" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+// 내 팔로우/팔로잉 목록 불러오기 
+router.get('/:userId/following', async (req, res) => {
+    let{userId} = req.params;
+    try {
+        let sql = "SELECT * FROM PRO_TBL_FOLLOW WHERE FOLLOWER_ID = ?";
+        let [list] = await db.query(sql, [userId]);        
+        res.json({
+            user : list,
+            result : "success"
+        })
+    } catch (error) {
+        console.log(error);
+    } 
+})
+
 
 module.exports = router; // 외부에서 쓸 수 있게 exports

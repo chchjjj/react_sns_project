@@ -1,83 +1,113 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Avatar, Grid, Paper } from '@mui/material';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import {jwtDecode} from "jwt-decode";
+import { Container, Typography, Box, Avatar, Paper, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function MyPage() {  
+  const [user, setUser] = useState();
+  const [followingList, setFollowingList] = useState([]);
+  const [followerList, setFollowerList] = useState([]);
+  const navigate = useNavigate();
 
-  let [user, setUser] = useState();
-  let navigate = useNavigate();
-
-  function fnGetUser(){
-    // jwt 통해서 토큰에서 아이디 꺼내야 함
-    const token = localStorage.getItem("token"); // 토큰은 절대 변하면 안되니까 const
-
-    if(token){ // 토큰에 값이 있을 때
-      const decoded = jwtDecode(token); // jwtDecode에 토큰값 넣기 (?)
-      console.log("decoded : ", decoded);
-      fetch("http://localhost:3010/user/" + decoded.userId)
-        .then(res => res.json())
-        .then(data => {
-          setUser(data.user);
-        })
-    } else { // 토큰에 값이 없을 땐 로그인 페이지로 이동시키기
-        alert("로그인 후 이용해주세요.");
-        navigate("/"); // 로그인 페이지로 이동
+  function fnGetUser() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/");
+      return;
     }
 
-    
+    const decoded = jwtDecode(token);
+
+    // 유저 정보 가져오기
+    fetch("http://localhost:3010/user/" + decoded.userId)
+      .then(res => res.json())
+      .then(data => setUser(data.user))
+      .catch(err => console.log(err));
+
+    // 팔로잉 목록 가져오기
+    fetch(`http://localhost:3010/user/${decoded.userId}/following`)
+      .then(res => res.json())
+      .then(data => setFollowingList(data.user || []))
+      .catch(err => console.log(err));
+
+    // 팔로워 목록 가져오기
+    fetch(`http://localhost:3010/user/${decoded.userId}/follower`)
+      .then(res => res.json())
+      .then(data => setFollowerList(data.user || []))
+      .catch(err => console.log(err));
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fnGetUser();
-  }, []) // 최초 1회만 실행
+  }, []);
+
+  // type: "follower" 또는 "following"
+  const renderUserList = (list, type) => {
+    if (!list || list.length === 0) {
+      return (
+        <Typography sx={{ textAlign: 'center', color: 'gray', py: 2 }}>
+          해당 유저가 존재하지 않습니다.
+        </Typography>
+      );
+    }
+
+    return (
+      <List sx={{ maxHeight: 300, overflowY: 'auto' }}>
+        {list.map((item, idx) => {
+          const userId = type === "follower" ? item.FOLLOWER_ID : item.FOLLOWING_ID;
+          return (
+            <ListItem key={idx} sx={{ mb: 1, bgcolor: 'rgba(0,0,0,0.05)', borderRadius: 2 }}>
+              <ListItemAvatar>
+                <Avatar src={item.PROFILE_IMAGE || ""} />
+              </ListItemAvatar>
+              <ListItemText primary={userId || "unknown"} />
+            </ListItem>
+          )
+        })}
+      </List>
+    );
+  };
 
   return (
-    <Container maxWidth="md">
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="flex-start"
-        minHeight="100vh"
-        sx={{ padding: '20px' }}
-      >
-        <Paper elevation={3} sx={{ padding: '20px', borderRadius: '15px', width: '100%' }}>
-          {/* 프로필 정보 상단 배치 */}
-          <Box display="flex" flexDirection="column" alignItems="center" sx={{ marginBottom: 3 }}>
-            <Avatar
-              alt="프로필 이미지"
-              src={user?.PROFILE_IMAGE || ""}
-              // 프로필 이미지 경로
-              sx={{ width: 100, height: 100, marginBottom: 2 }}
-            />
-            {/* <Typography variant="h5">
-                {user?.userName}
-            </Typography> */}
-            <Typography variant="body2" color="text.secondary">
-                @{user?.USER_ID}
-            </Typography>
+    <Container maxWidth="sm">
+      {/* 프로필 박스 */}
+      <Paper elevation={3} sx={{ padding: '20px', borderRadius: '15px', marginTop: 3, textAlign: 'center' }}>
+        <Avatar
+          alt="프로필 이미지"
+          src={user?.PROFILE_IMAGE || ""}
+          sx={{ width: 100, height: 100, marginBottom: 2, marginX: 'auto' }}
+        />
+        <Typography variant="body1">@{user?.USER_ID || "unknown"}</Typography>
+        <Box display="flex" justifyContent="space-around" mt={2}>
+          <Box>
+            <Typography variant="subtitle1">팔로워</Typography>
+            <Typography variant="h6">{user?.follower || 0}</Typography>
           </Box>
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid item xs={4} textAlign="center">
-              <Typography variant="h6">팔로워</Typography>
-              <Typography variant="body1">{user?.follower}</Typography>
-            </Grid>
-            <Grid item xs={4} textAlign="center">
-              <Typography variant="h6">팔로잉</Typography>
-              <Typography variant="body1">{user?.following}</Typography>
-            </Grid>
-            <Grid item xs={4} textAlign="center">
-              <Typography variant="h6">게시물</Typography>
-              <Typography variant="body1">{user?.cnt}</Typography>
-            </Grid>
-          </Grid>
-          {/* <Box sx={{ marginTop: 3 }}>
-            <Typography variant="h6">내 소개</Typography>
-            <Typography variant="body1">
-              {user?.intro}
-            </Typography>
-          </Box> */}
+          <Box>
+            <Typography variant="subtitle1">팔로잉</Typography>
+            <Typography variant="h6">{user?.following || 0}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="subtitle1">게시물</Typography>
+            <Typography variant="h6">{user?.cnt || 0}</Typography>
+          </Box>
+        </Box>
+      </Paper>
+
+      {/* 팔로워 목록 */}
+      <Box mt={4}>
+        <Typography variant="h6" sx={{ mb: 1 }}>팔로워 목록</Typography>
+        <Paper sx={{ padding: 2, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.8)' }}>
+          {renderUserList(followerList, "follower")}
+        </Paper>
+      </Box>
+
+      {/* 팔로잉 목록 */}
+      <Box mt={4} mb={4}>
+        <Typography variant="h6" sx={{ mb: 1 }}>팔로잉 목록</Typography>
+        <Paper sx={{ padding: 2, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.8)' }}>
+          {renderUserList(followingList, "following")}
         </Paper>
       </Box>
     </Container>

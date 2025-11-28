@@ -3,10 +3,13 @@ import {
   Card, CardHeader, CardMedia, CardContent, CardActions, Box, Typography,
   IconButton, Avatar, TextField
 } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite"; // 좋아요 관련
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; // 좋아요 관련
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline"; // 댓글창
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble"; // 댓글창
 import { useState, useEffect } from "react";
 import { jwtDecode } from 'jwt-decode';
+import CommentList from "./CommentList";
 
 // JWT에서 현재 로그인한 userId 가져오기
 const getCurrentUserId = () => {
@@ -21,12 +24,14 @@ const getCurrentUserId = () => {
   }
 };
 
-export default function PostDetailCard({ post, isEditing, editContent, setEditContent }) {
+export default function PostDetailCard({ post, isEditing, editContent, setEditContent, viewMode }) {
   const currentUserId = getCurrentUserId();
 
   // 좋아요 상태, 좋아요 수
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post?.likes?.length || 0);
+  // 댓글 수 
+  const [commentCount, setCommentCount] = useState(post?.commentCount || 0);
 
   // 초기 좋아요 상태 설정
 useEffect(() => {
@@ -34,7 +39,20 @@ useEffect(() => {
     setLiked(post.likes.includes(currentUserId));
     setLikeCount(post.likes.length);
   }
+
+  // 댓글 수 fetch
+  fetch(`http://localhost:3010/comment/count/${post.id}`)
+    .then(res => res.json())
+    .then(data => {
+      setCommentCount(data.count || 0);
+    })
+    .catch(err => console.error(err));
+
 }, [post, currentUserId]);
+
+  // 댓글창 버튼
+  const [openComments, setOpenComments] = useState(false);
+  const toggleComments = () => setOpenComments(prev => !prev);
 
   if (!post) return null;
 
@@ -70,6 +88,9 @@ useEffect(() => {
         });
     }
   };
+
+  //----------------------------------------------------------------
+
 
   const borderColor = post.type === "감사일기"
     ? "rgba(157, 195, 130, 0.5)"
@@ -125,14 +146,36 @@ useEffect(() => {
             <Typography sx={{ whiteSpace: "pre-line", color: "#4B3B3B" }}>{post.content}</Typography>
           )
         )}
-      </CardContent>
+      </CardContent>     
 
+      {/* 좋아요(하트), 댓글창 버튼 */}  
       <CardActions disableSpacing>
-        <IconButton onClick={handleLike} aria-label="like" sx={{ color: liked ? "red" : "#A67B5B" }}>
-          {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-        </IconButton>
-        <Typography sx={{ ml: 1, color: "#4B3B3B" }}>{likeCount}</Typography>
+          <IconButton onClick={handleLike} aria-label="like" sx={{ color: liked ? "red" : "#A67B5B" }}>
+            {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          </IconButton>
+          {/* 좋아요 수 표시 */}
+          <Typography sx={{ ml: 1, color: "#4B3B3B" }}>{likeCount}</Typography>
+
+          {viewMode !== "mine" && (
+            <>
+              <IconButton onClick={toggleComments} aria-label="comments" sx={{ color: "#A67B5B", ml: 1 }}>
+                {openComments ? <ChatBubbleIcon /> : <ChatBubbleOutlineIcon />}
+              </IconButton>
+              <Typography sx={{ ml: 1, color: "#4B3B3B" }}>{commentCount}</Typography>
+            </>
+          )}
       </CardActions>
+
+        {/* 댓글창 열리는 공간 */}
+        {openComments && (
+            <CardContent sx={{ p: 0, pt: 1 }}>
+              <Box sx={{ p: 2 }}>
+                  {/* commentCount 갱신 콜백 전달 */}
+                  <CommentList postId={post.id} onCommentCountChange={setCommentCount} />
+              </Box>
+            </CardContent>
+        )} 
+
     </Card>
   );
 }

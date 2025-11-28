@@ -12,6 +12,8 @@ import SearchPwd from './components/SearchPwd';
 import PostDetailCard from './components/PostDetailCard';
 import Edit from './components/Edit';
 import RandomFeed from './components/RandomFeed';
+import CommentList from './components/CommentList';
+import Notification from './components/Notification';
 
 const theme = createTheme({
   palette: {
@@ -58,6 +60,8 @@ function App() {
             <Route path="/postdetailcard" element={<PostDetailCard />} />
             <Route path="/edit/:postId" element={<Edit />} />
             <Route path="/randomfeed" element={<RandomFeed />} />
+            <Route path="/commentlist" element={<CommentList />} />
+            <Route path="/notification" element={<Notification />} />
           </Routes>
         </Box>
       </Box>
