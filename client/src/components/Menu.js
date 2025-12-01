@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, List, ListItem, ListItemText, Toolbar, Box, Typography, Badge } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, Box, Typography, Badge } from '@mui/material';
 import { DynamicFeed, Home, Add, Notifications as NotificationsIcon, AccountCircle, Logout } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -20,7 +20,6 @@ const getCurrentUserId = () => {
 function Menu() {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
-
   const userId = getCurrentUserId();
 
   // 미읽은 알림 개수 fetch
@@ -31,7 +30,6 @@ function Menu() {
       try {
         const resp = await fetch(`http://localhost:3010/comment/notify/unread/${userId}`);
         const data = await resp.json();
-        console.log('Unread fetch data:', data);
         setUnreadCount(data.unread || 0);
       } catch (err) {
         console.error('Unread fetch error:', err);
@@ -39,8 +37,6 @@ function Menu() {
     };
 
     fetchUnreadCount();
-
-    // 옵션: 일정 간격으로 폴링
     const interval = setInterval(fetchUnreadCount, 5000);
     return () => clearInterval(interval);
 
@@ -73,19 +69,29 @@ function Menu() {
           boxSizing: 'border-box',
           backgroundColor: 'rgba(243, 224, 181, 0.5)',
           borderRight: 'none',
-          paddingTop: '20px',
+          paddingTop: 0, // 상단 여백 최소화
           backdropFilter: 'blur(10px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         },
       }}
     >
-      <Toolbar />
-      <Box sx={{ textAlign: 'center', mb: 3 }}>
+      {/* 상단 로고 + 메뉴 */}
+      <Box sx={{ textAlign: 'center', mb: 4, mt: 1 }}>
+        <Box
+          component="img"
+          src="/image/menu_logo.png" // 실제 로고 경로
+          alt="Logo"
+          sx={{ width: 250, height: 'auto'}}
+        />
         <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#A67B5B' }}>
           MENU
         </Typography>
       </Box>
 
-      <List sx={{ display: 'flex', flexDirection: 'column', gap: 2, px: 2 }}>
+      {/* 메뉴 리스트 */}
+      <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, px: 2, flexGrow: 1 }}>
         {menuItems.map((item) => (
           <ListItem
             key={item.text}
@@ -112,13 +118,14 @@ function Menu() {
           </ListItem>
         ))}
 
+        {/* 로그아웃 버튼 */}
         <ListItem
           button
           onClick={() => {
             if (!window.confirm('로그아웃 하시겠습니까?')) return;
             localStorage.removeItem('token');
             alert('로그아웃 되었습니다.');
-            navigate('/');
+            navigate('/main');
           }}
           sx={{
             borderRadius: '30px',
@@ -131,6 +138,8 @@ function Menu() {
             justifyContent: 'center',
             backdropFilter: 'blur(5px)',
             cursor: 'pointer',
+            mt: 'auto', // 로그아웃 버튼을 맨 아래로
+            mb: 2,
           }}
         >
           <Logout sx={{ mr: 1, color: '#A67B5B' }} />

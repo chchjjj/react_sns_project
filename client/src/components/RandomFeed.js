@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SendIcon from '@mui/icons-material/Send';
+import { useNavigate } from 'react-router-dom';
 
 const getCurrentUserId = () => {
   const token = localStorage.getItem('token'); 
@@ -23,6 +24,11 @@ const RandomFeed = () => {
   const [followingList, setFollowingList] = useState([]);
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
+  let navigate = useNavigate();
+
+  // 랜덤피드 유저 게시글 모아보기
+  const [selectedUserPosts, setSelectedUserPosts] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
 
   const currentUserId = getCurrentUserId();
 
@@ -63,8 +69,37 @@ const RandomFeed = () => {
     .catch(err => console.error(`${isFollowing ? '언팔로우' : '팔로우'} 실패:`, err));
   };
 
-  const sendMessage = (userId) => {
-    alert(`${userId}에게 메시지를 보내는 기능은 아직 미구현입니다.`);
+  const sendMessage = async (userId) => {
+    try {
+
+    // 서버에 채팅방 존재 여부 요청
+    const res = await fetch(`http://localhost:3010/chat/check-room`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userA: currentUserId, userB: userId })
+    });
+
+    const data = await res.json();
+
+    // data.roomId가 존재하면 기존 채팅방, 없으면 새 채팅방 생성 후 이동
+    navigate(`/chat/${data.roomId}`);
+    } catch (err) {
+      console.error("DM 채팅방 확인 실패:", err);
+    }
+  };
+
+  // Avatar 클릭 시 해당 유저 게시글 모아서 가져오는 모달창
+  const handleUserClick = async (userId) => {
+    try {
+      const res = await fetch(`http://localhost:3010/feed/user-posts/${userId}`);
+      const data = await res.json();
+      if (Array.isArray(data.list)) {
+        setSelectedUserPosts(data.list);
+        setOpenModal(true);
+      }
+    } catch (err) {
+      console.error("유저 게시글 불러오기 실패:", err);
+    }
   };
 
   useEffect(() => {
@@ -121,7 +156,10 @@ const RandomFeed = () => {
               }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32, fontSize: 14 }}>
+                    <Avatar 
+                      sx={{ bgcolor: 'primary.main', width: 32, height: 32, fontSize: 14, cursor: 'pointer' }}
+                      onClick={() => handleUserClick(post.userId)}
+                    >
                       {post.userId.charAt(0).toUpperCase()}
                     </Avatar>
                     <Typography variant="subtitle2">{post.userId}</Typography>

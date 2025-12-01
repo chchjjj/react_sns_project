@@ -89,26 +89,26 @@ function Feed() {
     }
   };
 
-  const fnEdit = () => {
-    if (!selectedFeed?.id) return;
+  // const fnEdit = () => {
+  //   if (!selectedFeed?.id) return;
 
-    const payload = { ...selectedFeed, content: editContent };
-    fetch("http://localhost:3010/feed/" + selectedFeed.id, {
-      method: "PUT",
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("token"),
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.json())
-      .then(data => {
-        alert("수정되었습니다.");
-        setSelectedFeed({ ...selectedFeed, content: editContent });
-        setIsEditing(false);
-        fnFeeds();
-      });
-  };
+  //   const payload = { ...selectedFeed, content: editContent };
+  //   fetch("http://localhost:3010/feed/" + selectedFeed.id, {
+  //     method: "PUT",
+  //     headers: {
+  //       "Authorization": "Bearer " + localStorage.getItem("token"),
+  //       "Content-type": "application/json"
+  //     },
+  //     body: JSON.stringify(payload)
+  //   })
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       alert("수정되었습니다.");
+  //       setSelectedFeed({ ...selectedFeed, content: editContent });
+  //       setIsEditing(false);
+  //       fnFeeds();
+  //     });
+  // };
 
   return (
     <Container maxWidth="md">

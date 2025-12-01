@@ -187,7 +187,7 @@ router.post('/follow', async (req, res) => {
     try {
         let sql = "INSERT INTO PRO_TBL_FOLLOW(FOLLOWER_ID, FOLLOWING_ID, CDATETIME) "
                 + "VALUES(?, ?, NOW())";
-        let result = await db.query(sql, [followId, userId]);
+        let result = await db.query(sql, [ userId, followId]);
         res.json({
             result : result,
             msg : "팔로우 완료"
@@ -211,7 +211,7 @@ router.delete('/unfollow', async (req, res) => {
 });
 
 
-// 내 팔로우/팔로잉 목록 불러오기 
+// 내 팔로잉(내가 팔로우하는 사람들) 목록 불러오기 
 router.get('/:userId/following', async (req, res) => {
     let{userId} = req.params;
     try {
@@ -225,6 +225,22 @@ router.get('/:userId/following', async (req, res) => {
         console.log(error);
     } 
 })
+
+// 내 팔로워 목록 불러오기 (나를 팔로우하는 사람들)
+router.get('/:userId/follower', async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const sql = "SELECT * FROM PRO_TBL_FOLLOW WHERE FOLLOWING_ID = ?";
+        const [list] = await db.query(sql, [userId]);
+        res.json({
+            user: list,
+            result: "success"
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "팔로워 조회 실패" });
+    }
+});
 
 
 module.exports = router; // 외부에서 쓸 수 있게 exports

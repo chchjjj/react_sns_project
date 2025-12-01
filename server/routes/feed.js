@@ -231,6 +231,7 @@ router.get('/post/:postId', async (req, res) => {
                 USER_ID AS userId,
                 CATEGORY AS type,
                 CONTENT AS content,
+                VISIBILITY AS visibility,
                 CDATETIME AS cdatetime
             FROM PRO_TBL_POST
             WHERE POST_ID = ?
@@ -340,29 +341,35 @@ router.delete("/:feedId", authMiddleware, async (req, res) => {
 // 포스팅 수정
 router.put("/:feedId", authMiddleware, async (req, res) => { 
     let { feedId } = req.params;
-    let { content, visibility, category, sections } = req.body; // body에서 가져오기
+    // 💡 수정된 부분: req.body에서 'post' 객체와 'sections' 배열을 추출합니다.
+    let { post, sections } = req.body;
+    // post 객체에서 필요한 content, visibility, category를 추출합니다.
+    const { content, visibility, category } = post || {};
     let conn;
 
     try {
         conn = await db.getConnection();
         await conn.query('START TRANSACTION');
-
-        // PRO_TBL_POST 기본 수정 (UDATETIME만 현재 시간으로 업데이트)
-        let sqlEditUdate = "UPDATE PRO_TBL_POST SET UDATETIME = NOW() WHERE POST_ID = ?";
-        await conn.query(sqlEditUdate, [feedId]);
+        
+        // PRO_TBL_POST 기본 수정 
+        // 일기 유형 상관없이 공통필드 및 UDATETIME
+        let sqlEditUdate = "UPDATE PRO_TBL_POST SET "
+                        + "VISIBILITY = ?, CATEGORY = ?, UDATETIME = NOW() WHERE POST_ID = ?";
+        await conn.query(sqlEditUdate, [visibility, category, feedId]);
 
         if (category && category.includes('감사')) {
             // 감사일기: sections 수정
             if (sections && sections.length > 0) {
                 for (const section of sections) {
                     let updateSectionSql = "UPDATE PRO_TBL_POST_SECTION SET CONTENT = ?, UDATETIME = NOW() WHERE POST_ID = ? AND SECTION_ID = ?";
-                    await conn.query(updateSectionSql, [section.content, feedId, section.id]);
+                    await conn.query(updateSectionSql, [section.content, feedId, section.sectionId]);
+                    // SECTION_ID를 클라이언트에서 넘겨줘야 함
                 }
             }
         } else {
-            // 일상일기: content와 visibility 수정
-            let updatePostContentSql = "UPDATE PRO_TBL_POST SET CONTENT = ?, VISIBILITY = ? WHERE POST_ID = ?";
-            await conn.query(updatePostContentSql, [content, visibility, feedId]);
+            // 일상일기: content 수정 
+            let updatePostContentSql = "UPDATE PRO_TBL_POST SET CONTENT = ? WHERE POST_ID = ?";
+            await conn.query(updatePostContentSql, [content, feedId]);
         }
 
         await conn.query('COMMIT');

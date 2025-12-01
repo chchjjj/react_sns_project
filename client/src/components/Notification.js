@@ -53,22 +53,37 @@ export default function Notification() {
         setNotifications(prev => prev.map(n => n.NOTI_ID === noti.NOTI_ID ? { ...n, IS_READ: 'Y' } : n));
       }
 
-      // 2) 게시글 상세 조회
-      const resp = await fetch(`http://localhost:3010/feed/post/${noti.POST_ID}`, {
-        headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
-      });
-      const data = await resp.json();
+      // 2) 댓글 알림일 경우 : 게시글 상세 조회
+      if (noti.NOTI_TYPE === 'COMMENT') {
+        const resp = await fetch(`http://localhost:3010/feed/post/${noti.POST_ID}`, {
+          headers: { "Authorization": "Bearer " + localStorage.getItem("token") }
+        });
+        const data = await resp.json();
+        if (data.result === "success") {
+          setSelectedPost(data.post);
+          setOpen(true);
+        } else {
+          alert("게시글을 불러오지 못했습니다.");
+        }
+      // 3) DM 알림일 경우 : 클릭 시 채팅방 이동  
+      } else if (noti.NOTI_TYPE === 'DM') {        
+          // 1) MSG_ID → ROOM_ID 조회
+          const resp = await fetch(`http://localhost:3010/chat/room-by-msg/${noti.MSG_ID}`);
+          const data = await resp.json();
 
-      if (data.result === "success") {
-        setSelectedPost(data.post);
-        setOpen(true);
-      } else {
-        alert("게시글을 불러오지 못했습니다.");
+          if (!data.roomId) {
+            alert("DM 방 정보를 찾을 수 없습니다.");
+            return;
+          }
+
+          // 2) 채팅방 이동
+          navigate(`/chat/${data.roomId}`);
       }
+
     } catch (err) {
       console.error("Notification click error:", err);
     }
-  };
+};
 
   const handleClose = () => {
     setOpen(false);
@@ -93,7 +108,11 @@ export default function Notification() {
                 }}
               >
                 <ListItemText
-                  primary={`${noti.NOTI_TYPE} 알림 - 게시글 ID: ${noti.POST_ID}`}
+                  primary={
+                    noti.NOTI_TYPE === 'COMMENT'
+                      ? `새 댓글 알림 - 게시글 ${noti.POST_ID}`
+                      : `새 메세지 도착`
+                  }
                   secondary={new Date(noti.CDATETIME).toLocaleString()}
                 />
               </ListItem>

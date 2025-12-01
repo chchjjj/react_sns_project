@@ -7,6 +7,7 @@ const path = require('path');
 const userRouter = require("./routes/user");
 const feedRouter = require("./routes/feed");
 const commentRouter = require("./routes/comment");
+const chatRouter = require("./routes/chat");
 
 
 const app = express()
@@ -22,6 +23,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // 일종�
 app.use("/user", userRouter);
 app.use("/feed", feedRouter);
 app.use("/comment", commentRouter);
+app.use("/chat", chatRouter);
 
 
 app.listen(3010, ()=>{ // 3010번 주소(host)

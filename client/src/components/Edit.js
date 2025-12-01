@@ -18,6 +18,9 @@ function Edit() {
   const [hope, setHope] = useState('');
   const [content, setContent] = useState('');
 
+  // 💡 [추가] Section ID를 저장할 상태
+  const [sectionIds, setSectionIds] = useState({});
+
   const { postId } = useParams();
   const navigate = useNavigate();
 
@@ -45,12 +48,32 @@ function Edit() {
           setExistingImages(post.images || []);
 
           if (post.type.includes('감사') && post.sections) {
-            setGratitude(post.sections.find(s => s.sectionType === '감사')?.content || '');
-            setReflection(post.sections.find(s => s.sectionType === '반성')?.content || '');
-            setHope(post.sections.find(s => s.sectionType === '소망')?.content || '');
-          } else {
-            setContent(post.content || '');
-          }
+            // 💡 [수정] ID를 저장할 임시 맵 생성
+            const idsMap = {};
+            post.sections.forEach(s => {
+                if (s.sectionType === '감사') {
+                    setGratitude(s.content || '');
+                    idsMap['감사'] = s.sectionId;
+                } else if (s.sectionType === '반성') {
+                    setReflection(s.content || '');
+                    idsMap['반성'] = s.sectionId;
+                } else if (s.sectionType === '소망') {
+                    setHope(s.content || '');
+                    idsMap['소망'] = s.sectionId;
+                }
+            });
+            // 💡 [추가] 상태 업데이트
+            setSectionIds(idsMap);
+          } else {
+            setContent(post.content || '');
+          }
+
+          //   setGratitude(post.sections.find(s => s.sectionType === '감사')?.content || '');
+          //   setReflection(post.sections.find(s => s.sectionType === '반성')?.content || '');
+          //   setHope(post.sections.find(s => s.sectionType === '소망')?.content || '');
+          // } else {
+          //   setContent(post.content || '');
+          // }
         } else {
           alert("게시글을 불러오지 못했습니다.");
         }
@@ -72,19 +95,21 @@ function Edit() {
     };
 
     let sections = [];
-    if (diaryType === '감사') {
+    if (diaryType === '감사') { // 감사일기라면
       postData.content = null;
       sections = [
-        { type: '감사', content: gratitude },
-        { type: '반성', content: reflection },
-        { type: '소망', content: hope },
-      ].filter(s => s.content.trim() !== '');
+        // 💡 [수정] sectionId 추가
+        { type: '감사', content: gratitude, sectionId: sectionIds['감사'] },
+        { type: '반성', content: reflection, sectionId: sectionIds['반성'] },
+        { type: '소망', content: hope, sectionId: sectionIds['소망'] },
+      ].filter(s => s.content.trim() !== '' && s.sectionId); 
+      // ID가 있는 섹션만 필터링 (안전장치)
 
       if (sections.length === 0) {
         alert("감사일기는 최소한 하나의 내용을 작성해야 합니다.");
         return;
       }
-    } else {
+    } else { // 일상일기라면
       postData.content = content;
       if (!postData.content || postData.content.trim() === '') {
         alert("일상일기 내용을 입력해주세요.");
@@ -92,6 +117,7 @@ function Edit() {
       }
     }
 
+    // 수정 반영
     fetch(`http://localhost:3010/feed/${postId}`, {
       method: "PUT",
       headers: {
@@ -107,6 +133,7 @@ function Edit() {
             const formData = new FormData();
             for (let i = 0; i < files.length; i++) formData.append("file", files[i]);
             formData.append("feedId", postId);
+            // 사진 업로드
             fetch("http://localhost:3010/feed/upload", { method: "POST", body: formData })
               .then(res => res.json())
               .then(_ => {
@@ -191,7 +218,7 @@ function Edit() {
           </Typography>
         </Box>
 
-        {diaryType === '일상' && (
+        {/* {diaryType === '감사' && (
           <FormControl fullWidth margin="normal">
             <FormLabel>공개여부</FormLabel>
             <RadioGroup row value={openType} onChange={handleOpenTypeChange}>
@@ -199,7 +226,17 @@ function Edit() {
               <FormControlLabel value="H" control={<Radio />} label="비공개" />
             </RadioGroup>
           </FormControl>
-        )}
+        )} */}
+
+        
+          <FormControl fullWidth margin="normal">
+            <FormLabel>공개여부</FormLabel>
+            <RadioGroup row value={openType} onChange={handleOpenTypeChange}>
+              <FormControlLabel value="P" control={<Radio />} label="공개" />
+              <FormControlLabel value="H" control={<Radio />} label="비공개" />
+            </RadioGroup>
+          </FormControl>
+        
 
         <Button onClick={handleUpdate} variant="contained" color="primary" fullWidth sx={{ marginTop: '20px' }}>
           수정하기

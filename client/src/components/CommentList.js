@@ -3,6 +3,7 @@ import { Box, TextField, Button, List, ListItem,
           ListItemAvatar, Avatar, ListItemText, Typography, IconButton, Paper, Popper, Grow, ClickAwayListener, MenuList, MenuItem } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom"; 
 
 // 로그인 시 저장한 token
 const getCurrentUserId = () => {
@@ -18,6 +19,7 @@ const getCurrentUserId = () => {
 };
 
 export default function CommentList({ postId, onCommentCountChange }) {
+   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -126,7 +128,32 @@ export default function CommentList({ postId, onCommentCountChange }) {
     if (event.key === "Tab" || event.key === "Escape") setOpenMenuId(null);
   };
 
-  // 7) 초기 불러오기
+  // 7) 유저 아이콘 클릭 후 메세지 보내기 눌렀을 때
+  const handleSendMessage = async (targetUserId) => {
+    if (!currentUserId) return;
+
+    try {
+      // 1) DM 방 확인/생성
+      const resp = await fetch("http://localhost:3010/chat/check-room", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userA: currentUserId, userB: targetUserId }),
+      });
+
+      const data = await resp.json();
+      if (data.roomId) {
+        // 2) 채팅방 이동
+        navigate(`/chat/${data.roomId}`);
+        setOpenMenuId(null);
+      } else {
+        console.error("채팅방 생성/조회 실패");
+      }
+    } catch (err) {
+      console.error("메세지 보내기 실패:", err);
+    }
+  };
+
+  // 8) 초기 불러오기
   useEffect(() => {
     if (postId) fetchComments();
     fetchFollowingList();
@@ -187,7 +214,7 @@ export default function CommentList({ postId, onCommentCountChange }) {
                           <MenuItem onClick={() => toggleFollow(comment.USER_ID)}>
                             {followingList.includes(comment.USER_ID) ? "팔로우 취소" : "팔로우"}
                           </MenuItem>
-                          <MenuItem onClick={() => { console.log("메세지 보내기 클릭"); setOpenMenuId(null); }}>
+                          <MenuItem onClick={() => handleSendMessage(comment.USER_ID)}>
                             메세지 보내기
                           </MenuItem>
                         </MenuList>

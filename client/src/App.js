@@ -14,6 +14,10 @@ import Edit from './components/Edit';
 import RandomFeed from './components/RandomFeed';
 import CommentList from './components/CommentList';
 import Notification from './components/Notification';
+import Main from './components/Main';
+import ChatRoom from './components/ChatRoom';
+import ChatList from './components/ChatList';
+import ChatInput from './components/ChatInput';
 
 const theme = createTheme({
   palette: {
@@ -34,7 +38,8 @@ function App() {
   const isAuthPage =
     location.pathname === '/' ||
     location.pathname === '/join' ||
-    location.pathname === '/searchpwd';
+    location.pathname === '/searchpwd'||
+    location.pathname === '/main' ;
 
   return (
     <ThemeProvider theme={theme}>
@@ -62,6 +67,8 @@ function App() {
             <Route path="/randomfeed" element={<RandomFeed />} />
             <Route path="/commentlist" element={<CommentList />} />
             <Route path="/notification" element={<Notification />} />
+            <Route path="/main" element={<Main />} />
+            <Route path="/chat/:roomId" element={<ChatRoom />} />
           </Routes>
         </Box>
       </Box>

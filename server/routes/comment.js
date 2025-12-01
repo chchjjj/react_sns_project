@@ -101,14 +101,14 @@ router.delete("/:commId", authMiddleware, async (req, res) => {
 
 
 
-// 알림 목록 조회 (수신자 기준)
+// 알림 목록 조회 (수신자 기준) + 댓글 & DM 둘다 가져오게하기
 router.get("/notify/:userId", async (req, res) => {
     let { userId } = req.params;
 
     try {
         let sql = `
             SELECT 
-                NOTI_ID, NOTI_TYPE, USER_ID, POST_ID, COMM_ID, IS_READ, CDATETIME
+                NOTI_ID, NOTI_TYPE, USER_ID, POST_ID, COMM_ID, MSG_ID, IS_READ, CDATETIME
             FROM PRO_TBL_NOTIFY
             WHERE USER_ID = ?
             ORDER BY CDATETIME DESC
