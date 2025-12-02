@@ -1,13 +1,12 @@
 import React from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { Box, CssBaseline } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import Login from './components/Login';
 import Join from './components/Join';
 import Feed from './components/Feed';
 import Register from './components/Register';
 import MyPage from './components/MyPage';
 import Menu from './components/Menu';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SearchPwd from './components/SearchPwd';
 import PostDetailCard from './components/PostDetailCard';
 import Edit from './components/Edit';
@@ -16,17 +15,15 @@ import CommentList from './components/CommentList';
 import Notification from './components/Notification';
 import Main from './components/Main';
 import ChatRoom from './components/ChatRoom';
-import ChatList from './components/ChatList';
-import ChatInput from './components/ChatInput';
+import { AnimatePresence, motion } from 'framer-motion';
 
+// Theme 설정
 const theme = createTheme({
   palette: {
-    primary: { main: '#A67B5B' },          // 브라운 계열
-    secondary: { main: '#F3E0B5' },        // 베이지톤
-    info: { main: '#DDE3A3' },             // 연두 느낌
-    warning: { main: '#FFE07D' },          // 따뜻한 노랑
-    background: { default: 'rgba(243, 224, 181, 0.3)' }, // 투명 베이지
-    text: { primary: '#4B3B3B', secondary: '#6B5E53' }, // 부드러운 브라운
+    primary: { main: '#4f805f' }, // 그리너리 버튼/주요 색
+    secondary: { main: 'rgba(255,255,255,0.3)' }, // 투명 버튼
+    background: { default: 'rgba(245,245,245,0.8)' }, // Menu 배경
+    text: { primary: '#4f805f', secondary: '#6b8c72' }, // 글자 색상
   },
   typography: {
     fontFamily: 'Pretendard, "Noto Sans KR", sans-serif',
@@ -38,25 +35,42 @@ function App() {
   const isAuthPage =
     location.pathname === '/' ||
     location.pathname === '/join' ||
-    location.pathname === '/searchpwd'||
-    location.pathname === '/main' ;
+    location.pathname === '/searchpwd' ||
+    location.pathname === '/main' ||
+    location.pathname === '/login' ||
+    location.pathname === '/Login';
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          bgcolor: 'background.default',
+          minHeight: '100vh',
+          
+        }}
+      >
         {!isAuthPage && <Menu />}
+
+        
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             p: 3,
-            bgcolor: 'rgba(243, 224, 181, 0.3)',
+            // 메뉴보다 밝고 투명도 낮춰 구분 확실히
+            bgcolor: 'rgba(255,255,255,0.95)',
+            color: 'text.primary',
             minHeight: '100vh',
+            // 왼쪽 그림자 강화
+            boxShadow: '-5px 0 15px rgba(0,0,0,0.15)',
+            borderRadius: '0 12px 12px 0',
           }}
         >
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Main />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/join" element={<Join />} />
             <Route path="/feed" element={<Feed />} />
             <Route path="/register" element={<Register />} />

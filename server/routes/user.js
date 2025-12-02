@@ -182,31 +182,72 @@ router.put('/updatepwd', async (req, res) => {
 
 // 팔로우 추가
 router.post('/follow', async (req, res) => {
-    let{followId, userId} = req.body
-    console.log("userId:", userId, "followId:", followId); // ← 확인
-    try {
-        let sql = "INSERT INTO PRO_TBL_FOLLOW(FOLLOWER_ID, FOLLOWING_ID, CDATETIME) "
-                + "VALUES(?, ?, NOW())";
-        let result = await db.query(sql, [ userId, followId]);
-        res.json({
-            result : result,
-            msg : "팔로우 완료"
-        });
-    } catch (error) {
-        console.log(error);
-    } 
-})
+  const { followId, userId } = req.body;
+  const conn = await db.getConnection();   // 트랜잭션용 커넥션
+
+  try {
+    await conn.beginTransaction();
+
+    // 1) follow 테이블 insert
+    let sql1 =
+      "INSERT INTO PRO_TBL_FOLLOW (FOLLOWER_ID, FOLLOWING_ID, CDATETIME) VALUES (?, ?, NOW())";
+    await conn.query(sql1, [userId, followId]);
+
+    // 2) 팔로워 증가: followId 기준 → follower +1
+    let sql2 =
+      "UPDATE pro_tbl_user SET FOLLOWER = FOLLOWER + 1 WHERE USER_ID = ?";
+    await conn.query(sql2, [followId]);
+
+    // 3) 팔로잉 증가: userId 기준 → following +1
+    let sql3 =
+      "UPDATE pro_tbl_user SET FOLLOWING = FOLLOWING + 1 WHERE USER_ID = ?";
+    await conn.query(sql3, [userId]);
+
+    await conn.commit();
+
+    res.json({ msg: "팔로우 완료" });
+  } catch (error) {
+    await conn.rollback();
+    console.log(error);
+    res.status(500).json({ msg: "오류 발생" });
+  } finally {
+    conn.release();
+  }
+});
 
 
 // 팔로우 삭제(취소)
 router.delete('/unfollow', async (req, res) => {
   const { userId, followId } = req.body;
+  const conn = await db.getConnection();
+
   try {
-    let sql = "DELETE FROM PRO_TBL_FOLLOW WHERE FOLLOWER_ID = ? AND FOLLOWING_ID = ?";
-    await db.query(sql, [userId, followId]);
+    await conn.beginTransaction();
+
+    // 1) follow 테이블 삭제
+    let sql1 =
+      "DELETE FROM PRO_TBL_FOLLOW WHERE FOLLOWER_ID = ? AND FOLLOWING_ID = ?";
+    await conn.query(sql1, [userId, followId]);
+
+    // 2) 팔로워 감소: followId 기준 → follower -1
+    let sql2 =
+      "UPDATE pro_tbl_user SET FOLLOWER = FOLLOWER - 1 WHERE USER_ID = ? AND FOLLOWER > 0";
+    await conn.query(sql2, [followId]);
+
+    // 3) 팔로잉 감소: userId 기준 → following -1
+    let sql3 =
+      "UPDATE pro_tbl_user SET FOLLOWING = FOLLOWING - 1 WHERE USER_ID = ? AND FOLLOWING > 0";
+    await conn.query(sql3, [userId]);
+
+    await conn.commit();
+
     res.json({ msg: "언팔로우 완료" });
   } catch (error) {
+    await conn.rollback();
     console.log(error);
+    res.status(500).json({ msg: "오류 발생" });
+  } finally {
+    conn.release();
   }
 });
 

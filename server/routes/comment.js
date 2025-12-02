@@ -12,7 +12,8 @@ router.get('/:postId', async (req, res) => {
                 "SELECT * FROM PRO_TBL_COMMENT WHERE POST_ID = ?";
         let [list] = await db.query(sql, [postId]);        
         res.json({
-            user : list[0],
+            //user : list[0],
+            user : list,
             result : "success"
         })
     } catch (error) {

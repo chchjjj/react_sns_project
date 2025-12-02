@@ -32,7 +32,7 @@ export default function CommentList({ postId, onCommentCountChange }) {
     fetch(`http://localhost:3010/comment/${postId}`)
       .then((res) => res.json())
       .then((data) => {
-        const list = data.user ? [data.user] : [];
+        const list = Array.isArray(data.user) ? data.user : [];
         setComments(list);
         if (onCommentCountChange) onCommentCountChange(list.length); // 댓글수 갱신
       })

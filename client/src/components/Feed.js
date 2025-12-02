@@ -149,7 +149,15 @@ function Feed() {
                   {feed.imgPath ? (
                     <CardMedia
                       component="img"
-                      sx={{ width: 80, height: 80, borderRadius: 1, marginRight: 2, objectFit: 'cover' }}
+                      sx={{
+                        width: 80,
+                        height: 'auto',           // 높이를 자동으로
+                        maxHeight: 80,            // 최대 높이 제한
+                        borderRadius: 1,
+                        marginRight: 2,
+                        objectFit: 'contain',     // 전체 이미지 비율 유지
+                        backgroundColor: '#f0f0f0'
+                      }}
                       image={feed.imgPath}
                       alt={feed.imgName || '피드 이미지'}
                     />
