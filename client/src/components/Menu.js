@@ -78,7 +78,7 @@ function Menu() {
         '& .MuiDrawer-paper': {
           width: 280,
           boxSizing: 'border-box',
-          backgroundColor: 'rgba(245,245,245,0.8)',
+          background: 'linear-gradient(to bottom, rgba(247, 252, 247, 0.9), rgba(224, 239, 229, 0.9))',
           borderRight: 'none',
           paddingTop: 0,
           backdropFilter: 'blur(10px)',

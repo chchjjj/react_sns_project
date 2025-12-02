@@ -66,6 +66,7 @@ function App() {
             // 왼쪽 그림자 강화
             boxShadow: '-5px 0 15px rgba(0,0,0,0.15)',
             borderRadius: '0 12px 12px 0',
+            
           }}
         >
           <Routes>
