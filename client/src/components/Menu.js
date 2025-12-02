@@ -9,7 +9,7 @@ const getCurrentUserId = () => {
   const token = localStorage.getItem('token');
   if (!token) return null;
   try {
-    const decoded = jwtDecode(token); // { userId: "...", iat, exp }
+    const decoded = jwtDecode(token); 
     return decoded.userId;
   } catch (err) {
     console.error("JWT decode error", err);
@@ -22,7 +22,6 @@ function Menu() {
   const [unreadCount, setUnreadCount] = useState(0);
   const userId = getCurrentUserId();
 
-  // 미읽은 알림 개수 fetch
   useEffect(() => {
     if (!userId) return;
 
@@ -39,7 +38,6 @@ function Menu() {
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 5000);
     return () => clearInterval(interval);
-
   }, [userId]);
 
   const menuItems = [
@@ -58,6 +56,19 @@ function Menu() {
     { text: '마이페이지', icon: <AccountCircle />, path: '/mypage' },
   ];
 
+  const buttonStyle = {
+    borderRadius: '30px',
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    color: '#4f805f',
+    py: 1.5,
+    px: 3,
+    '&:hover': { backgroundColor: 'rgba(79,128,95,0.2)' },
+    boxShadow: '0 3px 6px rgba(0,0,0,0.05)',
+    justifyContent: 'center',
+    backdropFilter: 'blur(5px)',
+    cursor: 'pointer',
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -67,9 +78,9 @@ function Menu() {
         '& .MuiDrawer-paper': {
           width: 280,
           boxSizing: 'border-box',
-          backgroundColor: 'rgba(243, 224, 181, 0.5)',
+          backgroundColor: 'rgba(245,245,245,0.8)',
           borderRight: 'none',
-          paddingTop: 0, // 상단 여백 최소화
+          paddingTop: 0,
           backdropFilter: 'blur(10px)',
           display: 'flex',
           flexDirection: 'column',
@@ -77,40 +88,27 @@ function Menu() {
         },
       }}
     >
-      {/* 상단 로고 + 메뉴 */}
       <Box sx={{ textAlign: 'center', mb: 4, mt: 1 }}>
         <Box
           component="img"
-          src="/image/menu_logo.png" // 실제 로고 경로
+          src="/image/menu_logo.png"
           alt="Logo"
           sx={{ width: 250, height: 'auto'}}
         />
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#A67B5B' }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#4f805f' }}>
           MENU
         </Typography>
       </Box>
 
-      {/* 메뉴 리스트 */}
       <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, px: 2, flexGrow: 1 }}>
         {menuItems.map((item) => (
           <ListItem
             key={item.text}
             button
             onClick={() => navigate(item.path)}
-            sx={{
-              borderRadius: '30px',
-              backgroundColor: 'rgba(255,255,255,0.7)',
-              color: '#4B3B3B',
-              py: 1.5,
-              px: 3,
-              '&:hover': { backgroundColor: 'rgba(255,224,125,0.5)' },
-              boxShadow: '0 3px 6px rgba(0,0,0,0.1)',
-              justifyContent: 'center',
-              backdropFilter: 'blur(5px)',
-              cursor: 'pointer',
-            }}
+            sx={buttonStyle}
           >
-            {item.icon && <Box sx={{ mr: 1, color: '#A67B5B' }}>{item.icon}</Box>}
+            {item.icon && <Box sx={{ mr: 1, color: '#4f805f' }}>{item.icon}</Box>}
             <ListItemText
               primary={item.text}
               primaryTypographyProps={{ fontWeight: 'medium', textAlign: 'center' }}
@@ -118,7 +116,6 @@ function Menu() {
           </ListItem>
         ))}
 
-        {/* 로그아웃 버튼 */}
         <ListItem
           button
           onClick={() => {
@@ -127,22 +124,9 @@ function Menu() {
             alert('로그아웃 되었습니다.');
             navigate('/main');
           }}
-          sx={{
-            borderRadius: '30px',
-            backgroundColor: 'rgba(255,255,255,0.7)',
-            color: '#4B3B3B',
-            py: 1.5,
-            px: 3,
-            '&:hover': { backgroundColor: 'rgba(255,224,125,0.5)' },
-            boxShadow: '0 3px 6px rgba(0,0,0,0.1)',
-            justifyContent: 'center',
-            backdropFilter: 'blur(5px)',
-            cursor: 'pointer',
-            mt: 'auto', // 로그아웃 버튼을 맨 아래로
-            mb: 2,
-          }}
+          sx={{ ...buttonStyle, mt: 'auto', mb: 2 }}
         >
-          <Logout sx={{ mr: 1, color: '#A67B5B' }} />
+          <Logout sx={{ mr: 1, color: '#4f805f' }} />
           <ListItemText
             primary="로그아웃"
             primaryTypographyProps={{ fontWeight: 'medium', textAlign: 'center' }}

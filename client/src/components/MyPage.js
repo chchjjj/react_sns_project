@@ -14,7 +14,7 @@ function MyPage() {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("로그인 후 이용해주세요.");
-      navigate("/");
+      navigate("/Login");
       return;
     }
 
@@ -48,7 +48,7 @@ function MyPage() {
     const token = localStorage.getItem("token");
     if (!token) {
       alert("로그인 후 이용해주세요.");
-      navigate("/");
+      navigate("/Login");
       return;
     }
 

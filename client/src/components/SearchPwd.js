@@ -45,7 +45,7 @@ function SearchPwd() {
             .then(data => {
                 if (data.result) {
                     alert("비밀번호가 변경되었습니다.");
-                    navigate("/");
+                    navigate("/Login");
                 } else {
                     setMessage(data.msg || "비밀번호 변경에 실패했습니다.");
                 }

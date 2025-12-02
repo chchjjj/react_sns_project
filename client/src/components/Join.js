@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { TextField, Button, Container, Typography, Box, InputAdornment, IconButton } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, InputAdornment } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Join() {
@@ -24,7 +24,7 @@ function Join() {
     // 2. 아이디 정규식 체크
     const idRegex = /^[a-zA-Z0-9]{6,12}$/; // 영문+숫자 6~12자
     if (!idRegex.test(id)) {
-      alert("아이디는 4~12자의 영문과 숫자만 가능합니다.");
+      alert("아이디는 6~12자의 영문과 숫자만 가능합니다.");
       return;
     }
 
@@ -43,76 +43,104 @@ function Join() {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="70vh"
-        bgcolor="#ffffff"  // 박스 배경색 흰색
-        padding={4}
-        boxShadow={3}      // 살짝 그림자
-        borderRadius={2}   // 모서리 둥글게
-        marginTop="100px"
-      >
-        <Typography variant="h5" gutterBottom>
-          환영합니다!
-        </Typography>  
+    <Box
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        margin: 0,
+        padding: 0,
+        backgroundImage: `url(${process.env.PUBLIC_URL}/image/main.png)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {/* 배경 흐리게 처리 */}
+      <Box sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(255,255,255,0.3)"
+      }} />
 
-        <TextField inputRef={userId} label="아이디" 
+      <Container maxWidth="xs" sx={{ position: "relative", zIndex: 1 }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          minHeight="70vh"
+          bgcolor="#ffffff"  // 박스 배경색 흰색
+          padding={4}
+          boxShadow={3}      // 살짝 그림자
+          borderRadius={2}   // 모서리 둥글게
+          marginTop="50px"
+        >
+          <Typography variant="h5" gutterBottom>
+            환영합니다!
+          </Typography>  
+
+          <TextField inputRef={userId} label="아이디" 
             variant="outlined" margin="normal" fullWidth 
             disabled={idChecked}
             InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Button onClick={checkDuplicate} size="small" variant="contained">중복확인</Button>
-              </InputAdornment>
-            ),
-          }}    
-        />
-        <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%' }}>
-          아이디는 6~12자의 영문, 숫자만 가능합니다.
-        </Typography>
-
-        <TextField
-          inputRef={pwd}
-          label="비밀번호"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          type="password"
-        />
-        <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%' }}>
-          비밀번호는 최소 8자 이상, 영문/숫자/특수문자 포함
-        </Typography>
-
-        <TextField
-          inputRef={pwdChk}
-          label="비밀번호 확인"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          type="password"
-        />
-        <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%', marginBottom: '10px' }}>
-          비밀번호를 동일하게 입력해주세요.
-        </Typography>
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button onClick={checkDuplicate} size="small" variant="contained">중복확인</Button>
+                </InputAdornment>
+              ),
+            }}    
+          />
+          <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%' }}>
+            아이디는 6~12자의 영문, 숫자만 가능합니다.
+          </Typography>
 
           <TextField
-          inputRef={email}
-          label="이메일"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-        />
-        <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%', marginBottom: '10px' }}>
-          정확한 메일주소를 입력해주세요. (비밀번호 찾기에 활용)
-        </Typography>
-        
-        
-        {/* '회원가입' 버튼 눌렀을 때 */}
-        <Button onClick={()=>{
+            inputRef={pwd}
+            label="비밀번호"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            type="password"
+          />
+          <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%' }}>
+            비밀번호는 최소 8자 이상, 영문/숫자/특수문자 포함
+          </Typography>
+
+          <TextField
+            inputRef={pwdChk}
+            label="비밀번호 확인"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            type="password"
+          />
+          <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%', marginBottom: '10px' }}>
+            비밀번호를 동일하게 입력해주세요.
+          </Typography>
+
+          <TextField
+            inputRef={email}
+            label="이메일"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
+          <Typography variant="caption" color="textSecondary" align="left" style={{ width: '100%', marginBottom: '10px' }}>
+            정확한 메일주소를 입력해주세요. (비밀번호 찾기에 활용)
+          </Typography>
+
+          {/* '회원가입' 버튼 눌렀을 때 */}
+          <Button onClick={() => {
             const idValue = userId.current.value;
             const pwdValue = pwd.current.value;
             const pwdChkValue = pwdChk.current.value;
@@ -132,7 +160,6 @@ function Join() {
 
             // 3. 비밀번호 정규식 체크
             const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-            // 최소 8자, 영문+숫자+특수문자 포함
             if (!pwdRegex.test(pwdValue)) {
               alert("비밀번호는 최소 8자 이상, 영문/숫자/특수문자를 포함해야 합니다.");
               return;
@@ -155,31 +182,28 @@ function Join() {
             };
 
             fetch("http://localhost:3010/user/join", {
-                method : "POST",
-                // 헤더랑 바디는 PUT 또는 POST 형태일 때 들어감
-                headers : {
-                    "Content-type" : "application/json"
-                    // 이건 약속된 정보
-                },
-                body : JSON.stringify(param) 
-                // JSON 형태로 타입을 변환하여 보내주는 것임
+              method: "POST",
+              headers: {
+                "Content-type": "application/json" // 이건 약속된 정보
+              },
+              body: JSON.stringify(param) // JSON 형태로 타입을 변환하여 보내줌
             })                    
-              .then( res => res.json() )
-              .then( data => {
-                  alert(data.msg);
-                  console.log(data);
-                  navigate("/");
-              } )
-
-        }} variant="contained" color="primary" fullWidth style={{ marginTop: '20px' }}>
+              .then(res => res.json())
+              .then(data => {
+                alert(data.msg);
+                console.log(data);
+                navigate("/");
+              });
+          }} variant="contained" color="primary" fullWidth style={{ marginTop: '20px' }}>
             회원가입
-        </Button>
+          </Button>
 
-        <Typography variant="body2" style={{ marginTop: '10px' }}>
-          이미 회원이라면? <Link to="/">로그인</Link>
-        </Typography>
-      </Box>
-    </Container>
+          <Typography variant="body2" style={{ marginTop: '10px' }}>
+            이미 회원이라면? <Link to="/login">로그인</Link>
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 }
 
