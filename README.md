@@ -58,8 +58,16 @@
 - 메뉴 중 '피드' 클릭 시, 로그인 사용자를 제외한 다른 사용자들의 '공개' 상태 피드가 랜덤으로 2개씩 게시
 - 우측 상단 '새로고침' 버튼 통해 새로운 피드 확인 가능 (무한 스크롤 버전으로 보완 고려중)
 - 게시글마다 우측 상단의 팔로우/언팔로우 & DM(다이렉트 메세지) 버튼 통해 작업 가능
+  
 
  ![랜덤2](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed2.JPG)
  ![랜덤3](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG)
 - 게시글 작성자 아이콘 클릭 시 해당 사용자의 피드 모아보기 & 상세보기 모달창 생성
-- 해당 사용자의 비공개 게시글은 포함되어 있지 않음
+- 게시글 작성자의 비공개 게시글은 포함되어 있지 않음
+
+
+***
+### **4.  채팅 및 알림 기능**
+![랜덤](https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG)
+- 다른 사용자가 내 게시글에 댓글을 남기거나 DM(다이렉트 메세지)을 보낸 경우, 알림 메뉴에 빨갛게 표시가 뜨며 확인하지 않은 알림은 노란색으로 구분되어 표시됨.
+- 알림 클릭 시 해당 화면으로 이동되며, 확인 시 메뉴의 빨간 표시 및 노란색 컬러 사라짐
