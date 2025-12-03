@@ -91,6 +91,9 @@
 
 
 ***
-### **7.  로그인, 회원가입**
+### **7.  로그인, 회원가입, 비밀번호 재설정**
 ![로그인](https://github.com/chchjjj/react_sns_project/blob/main/images/login.JPG)
-- 로그
+![회원가입](https://github.com/chchjjj/react_sns_project/blob/main/images/join.JPG)
+![비번리셋](https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset.JPG)
+- 아이디 중복확인, 아이디 & 비밀번호 정규식
+- 회원가입 및 비밀번호 변경 시 비밀번호는 해시화 하여 DB에 저장됨
