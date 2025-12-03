@@ -47,8 +47,9 @@
 
 
 ![사진클릭](https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG)
- - 로그인 시 기본으로 사용자의 피드 목록 화면으로 이동
- - 클릭 시 모달창으로 사진, 내용, 댓글, 좋아요 기록 표시
+ - 로그인 시 기본으로 사용자의 피드 목록 화면으로 이동함.
+ - 공개여부 상관 없이 사용자의 모든 게시글이 조회되며, 5개씩 페이징 처리
+ - 특정 게시글 클릭 시 모달창으로 사진, 내용, 댓글, 좋아요 기록 표시
  - 댓글 단 사용자 아이콘 클릭 시 팔로우/메시지 발송 가능하며 사진 클릭 시 원본 크기로 확인 가능
 
 
@@ -67,7 +68,23 @@
 
 
 ***
-### **4.  채팅 및 알림 기능**
-![랜덤](https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG)
+### **4.  알림 기능**
+![알림](https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG)
+![알림체크](https://github.com/chchjjj/react_sns_project/blob/main/images/alertCheck.JPG)
 - 다른 사용자가 내 게시글에 댓글을 남기거나 DM(다이렉트 메세지)을 보낸 경우, 알림 메뉴에 빨갛게 표시가 뜨며 확인하지 않은 알림은 노란색으로 구분되어 표시됨.
-- 알림 클릭 시 해당 화면으로 이동되며, 확인 시 메뉴의 빨간 표시 및 노란색 컬러 사라짐
+- 알림 클릭 시 해당 화면으로 이동되고(채팅방 또는 댓글이 달린 게시물), 확인 시 메뉴의 빨간 표시 및 노란색 컬러 사라짐
+
+
+***
+### **5.  채팅 기능**
+![채팅](https://github.com/chchjjj/react_sns_project/blob/main/images/chat.JPG)
+- 유저 A와 유저 B간 처음 채팅 시 최초 1회 새로운 채팅방이 개설되며, 그 이후로는 해당 채팅방에서 메세지를 주고 받는다.
+- 상기 4번 기능대로, 메세지를 받은 사용자는 알림 확인 전까지 '알림' 메뉴에 빨갛게 표시가 뜬다.
+
+
+***
+### **6.  마이페이지**
+![마이페이지](https://github.com/chchjjj/react_sns_project/blob/main/images/myPage.JPG)
+- 로그인 한 사용자는 마이페이지에서 본인의 게시글 개수, 팔로워/팔로잉 수 확인 가능.
+- 팔로워/팔로잉 목록도 표시되며, 팔로잉(내가 팔로우한 사람)을 취소할 수 있다.
+- 우측 상단 톱니바퀴 버튼을 통해 정보수정이 가능하다. (프로필 사진 등록 보완 중)
