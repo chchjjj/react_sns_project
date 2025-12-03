@@ -39,7 +39,7 @@
    
 
 ***
-### **2.  내 기록 모아보기**
+### **2.  내 기록 모아보기(목록 불러오기, 수정, 삭제)**
 ![피드](https://github.com/chchjjj/react_sns_project/blob/main/images/feed.JPG)
 
 
@@ -51,34 +51,40 @@
  - 공개여부 상관 없이 사용자의 모든 게시글이 조회되며, 5개씩 페이징 처리
  - 특정 게시글 클릭 시 모달창으로 사진, 내용, 댓글, 좋아요 기록 표시
  - 댓글 단 사용자 아이콘 클릭 시 팔로우/메시지 발송 가능하며 사진 클릭 시 원본 크기로 확인 가능
+ - 게시글 수정, 삭제 가능
 
 
 ***
-### **3.  랜덤 피드**
+### **3.  랜덤피드, 팔로우/언팔로우, 좋아요, 댓글 기능**
 ![랜덤](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed.JPG)
 - 메뉴 중 '피드' 클릭 시, 로그인 사용자를 제외한 다른 사용자들의 '공개' 상태 피드가 랜덤으로 2개씩 게시
 - 우측 상단 '새로고침' 버튼 통해 새로운 피드 확인 가능 (무한 스크롤 버전으로 보완 고려중)
 - 게시글마다 우측 상단의 팔로우/언팔로우 & DM(다이렉트 메세지) 버튼 통해 작업 가능
+- 좋아요 버튼 클릭 시 색상 변경 및 DB에 기록 저장 (재클릭 시 원복 및 DB 삭제)
+- 댓글 등록, 삭제 기능 (본인이 쓴 댓글 옆에만 휴지통 버튼 생성)
+<br>
   
 
  ![랜덤2](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed2.JPG)
- ![랜덤3](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG)
+<img src="https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG" width="500"/>
 - 게시글 작성자 아이콘 클릭 시 해당 사용자의 피드 모아보기 & 상세보기 모달창 생성
-- 게시글 작성자의 비공개 게시글은 포함되어 있지 않음
+- 게시글 작성자의 비공개 게시글은 포함되어 있지 않음 (다른 사용자가 볼 때는 총 3개지만, 실제로는 5개)
 
 
 ***
 ### **4.  알림 기능**
 ![알림](https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG)
 ![알림체크](https://github.com/chchjjj/react_sns_project/blob/main/images/alertCheck.JPG)
-- 다른 사용자가 내 게시글에 댓글을 남기거나 DM(다이렉트 메세지)을 보낸 경우, 알림 메뉴에 빨갛게 표시가 뜨며 확인하지 않은 알림은 노란색으로 구분되어 표시됨.
+- 다른 사용자가 내 게시글에 댓글을 남기거나 DM(다이렉트 메세지)을 보낸 경우,<br>
+알림 메뉴에 빨갛게 표시가 뜨며 확인하지 않은 알림은 노란색으로 구분되어 표시됨.
 - 알림 클릭 시 해당 화면으로 이동되고(채팅방 또는 댓글이 달린 게시물), 확인 시 메뉴의 빨간 표시 및 노란색 컬러 사라짐
 
 
 ***
 ### **5.  채팅 기능**
-![채팅](https://github.com/chchjjj/react_sns_project/blob/main/images/chat.JPG)
-- 유저 A와 유저 B간 처음 채팅 시 최초 1회 새로운 채팅방이 개설되며, 그 이후로는 해당 채팅방에서 메세지를 주고 받는다.
+<img src="https://github.com/chchjjj/react_sns_project/blob/main/images/chat.JPG" width="700"/>
+
+- 유저 A와 유저 B간 처음 채팅 시 최초 1회 새로운 채팅방이 개설되며,<br>그 이후로는 해당 채팅방에서 메세지를 주고 받는다.
 - 상기 4번 기능대로, 메세지를 받은 사용자는 알림 확인 전까지 '알림' 메뉴에 빨갛게 표시가 뜬다.
 
 
@@ -94,6 +100,34 @@
 ### **7.  로그인, 회원가입, 비밀번호 재설정**
 ![로그인](https://github.com/chchjjj/react_sns_project/blob/main/images/login.JPG)
 ![회원가입](https://github.com/chchjjj/react_sns_project/blob/main/images/join.JPG)
-![비번리셋](https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset.JPG)
+<table>
+  <tr>
+    <td><img src="https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset.JPG" width="320"/></td>
+    <td><img src="https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset2.JPG" width="320"/></td>
+  </tr>
+</table>
+
 - 아이디 중복확인, 아이디 & 비밀번호 정규식
+- 비밀번호 변경을 원할 경우 기본 정보를 통한 계정을 찾은 후 변경 가능
 - 회원가입 및 비밀번호 변경 시 비밀번호는 해시화 하여 DB에 저장됨
+
+
+***
+## 💎 프로젝트 후기
+### 😎 만족한 점
+- 이번 개인 프로젝트는 새롭게 React를 활용한 점이 재미있었음
+- 원하는 라이브러리, MUI를 활용하는 면에서 흥미를 느낌
+- 실제로도 관심이 있었던 감사일기 및 부담 없는 SNS를 만든 것에 대한 뿌듯함
+
+
+### 😥 아쉬웠던 점
+- '테마'적으로는 만족스러웠지만, 좀 더 기능성 있는 API를 활용했다면 더욱 완성도 높은 프로젝트가 되었을 거라고 생각함
+- 컨디션 난조로 하루 이상을 제대로 집중하지 못한 아쉬움
+
+
+***
+## 💚 최종 회고
+두번째로 진행한 개인 프로젝트로서, 자유롭게 아이디어를 구상하고 변형하는 점에서 재미를 느꼈다.<br>
+첫번째 개인 프로젝트에서는 정말 CRUD만 핵심적으로 다루었다면,<br>
+이번에는 채팅, 알림, 랜덤 피드 등 일상과 좀 더 가까운 형태의 웹사이트를 만들어 내어 뿌듯했다.<br>
+좀 더 욕심을 내어 기능적 퀄리티를 높였어야 했다는 아쉬움이 남지만, 한 단계씩 발전할 수 있다는 기대감이 생겼다.
