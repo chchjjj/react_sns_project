@@ -1,8 +1,9 @@
 # 🌼 Momentiary (모멘티어리) 
 > 혼자서도, 함께해도 좋은 일상의 소소한 감사 기록
 ***
-![대표사진](https://github.com/chchjjj/react_sns_project/images/main.JPG)
-***
+![대표사진](https://github.com/chchjjj/react_sns_project/blob/main/images/main.JPG)
+
+
 ## 🍀 프로젝트 소개
 모멘티어리는 순간(moment) + 다이어리(diary)의 합성어로,
 
