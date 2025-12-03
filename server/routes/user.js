@@ -180,6 +180,45 @@ router.put('/updatepwd', async (req, res) => {
 })
 
 
+// 마이페이지 - 유저 정보 업데이트 (이메일 / 비밀번호)
+router.put('/update', async (req, res) => {
+    const { userId, email, pwd } = req.body;
+
+    try {
+        let updates = [];
+        let values = [];
+
+        // 이메일 변경 요청이 있을 때
+        if (email && email.trim() !== "") {
+            updates.push("EMAIL = ?");
+            values.push(email.trim());
+        }
+
+        // 비밀번호 변경 요청이 있을 때
+        if (pwd && pwd.trim() !== "") {
+            let hashPwd = await bcrypt.hash(pwd.trim(), 10);
+            updates.push("PASSWORD = ?");
+            values.push(hashPwd);
+        }
+
+        if (updates.length === 0) {
+            return res.json({ result: false, msg: "변경된 내용이 없습니다." });
+        }
+
+        let sql = `UPDATE PRO_TBL_USER SET ${updates.join(", ")} WHERE USER_ID = ?`;
+        values.push(userId);
+
+        await db.query(sql, values);
+
+        res.json({ result: true, msg: "정보가 수정되었습니다." });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ result: false, msg: "서버 오류가 발생했습니다." });
+    }
+});
+
+
+
 // 팔로우 추가
 router.post('/follow', async (req, res) => {
   const { followId, userId } = req.body;

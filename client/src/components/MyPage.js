@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Avatar, Paper, List, ListItem, ListItemAvatar, ListItemText, IconButton } from '@mui/material';
+import { Container, Typography, Box, Avatar, Paper, List, ListItem, ListItemAvatar, ListItemText, IconButton, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function MyPage() {  
   const [user, setUser] = useState();
@@ -96,25 +97,25 @@ function MyPage() {
 
     return (
       <List sx={{ maxHeight: 300, overflowY: 'auto' }}>
-      {list.map((item, idx) => {
-        // 팔로워 목록이면 FOLLOWER_ID, 팔로잉 목록이면 FOLLOWING_ID 사용
-        const userId = type === "follower" ? item.FOLLOWER_ID : item.FOLLOWING_ID;
+        {list.map((item, idx) => {
+          // 팔로워 목록이면 FOLLOWER_ID, 팔로잉 목록이면 FOLLOWING_ID 사용
+          const userId = type === "follower" ? item.FOLLOWER_ID : item.FOLLOWING_ID;
 
-        // 프로필 이미지가 DB에 없으면 비워두기
-        const profileImage = item.PROFILE_IMAGE || "";
+          // 프로필 이미지가 DB에 없으면 비워두기
+          const profileImage = item.PROFILE_IMAGE || "";
 
-        return (
-          <ListItem
-            key={idx}
-            sx={{
-              mb: 1,
-              bgcolor: 'rgba(0,0,0,0.05)',
-              borderRadius: 2,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}
-          >
+          return (
+            <ListItem
+              key={idx}
+              sx={{
+                mb: 1,
+                bgcolor: 'rgba(0,0,0,0.05)',
+                borderRadius: 2,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
             <Box display="flex" alignItems="center">
               <ListItemAvatar>
                 <Avatar src={profileImage} />
@@ -192,13 +193,31 @@ function MyPage() {
   return (
     <Container maxWidth="sm">
       {/* 프로필 박스 */}
-      <Paper elevation={3} sx={{ padding: '20px', borderRadius: '15px', marginTop: 3, textAlign: 'center' }}>
+      <Paper 
+        elevation={3} 
+        sx={{ padding: '20px', borderRadius: '15px', marginTop: 3, textAlign: 'center', position: 'relative' }}
+      >
+        {/* 오른쪽 상단 설정 버튼 */}
+        <IconButton
+          onClick={() => navigate("/useredit")}
+          sx={{
+            position: 'absolute',
+            top: 10,
+            right: 10,
+            color: 'text.secondary'
+          }}
+        >
+          <SettingsIcon />
+        </IconButton>
+
         <Avatar
           alt="프로필 이미지"
           src={user?.PROFILE_IMAGE || ""}
           sx={{ width: 100, height: 100, marginBottom: 2, marginX: 'auto' }}
         />
-        <Typography variant="body1">@{user?.USER_ID || "unknown"}</Typography>
+        <Typography variant="body1">
+            @{user?.USER_ID || "unknown"} 
+        </Typography>
         <Box display="flex" justifyContent="space-around" mt={2}>
           <Box>
             <Typography variant="subtitle1">팔로워</Typography>

@@ -94,19 +94,35 @@ const RandomFeed = () => {
   };
 
 
-  // Avatar 클릭 시 해당 유저 게시글 모아서 가져오는 모달창
-  const handleUserClick = async (userId) => {
-    try {
-      const res = await fetch(`http://localhost:3010/feed/${userId}`);
-      const data = await res.json();
-      if (Array.isArray(data.list)) {
-        setSelectedUserPosts(data.list);
-        setOpenModal(true);
-      }
-    } catch (err) {
-      console.error("유저 게시글 불러오기 실패:", err);
+// Avatar 클릭 시 해당 유저 게시글 모아서 가져오는 모달창
+const handleUserClick = async (userId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showToastMessage("로그인이 필요합니다.");
+      return;
     }
-  };
+
+    const res = await fetch(`http://localhost:3010/feed/${userId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    const data = await res.json();
+
+    if (data.result === "success") {
+      setSelectedUserPosts(data.list);
+      setOpenModal(true);
+    } else if (data.result === "forbidden") {
+      showToastMessage("이 게시글은 비공개입니다.");
+    } else {
+      showToastMessage("게시글을 불러오지 못했습니다.");
+    }
+  } catch (err) {
+    console.error("유저 게시글 불러오기 실패:", err);
+  }
+};
 
   // 모달 내 이미지 클릭 시 상세 보기 모달 띄우기 (새로 추가)
   const handleImageClick = async (postId) => {
@@ -120,6 +136,15 @@ const RandomFeed = () => {
       const data = await res.json();
 
       if (data.result === "success") {
+
+        // ⭐⭐ 이 부분 추가: VISIBILITY 확인 ⭐⭐
+        if (data.post.visibility !== 'P') {
+          // 비공개 게시글인 경우 (P가 아닌 경우)
+          showToastMessage("비공개 게시글입니다.");
+          return; // 상세 모달 열지 않고 종료
+        }
+
+
         setSelectedPostDetail(data.post);
         setOpenDetailModal(true); // 상세 보기 모달 열기
       } else {

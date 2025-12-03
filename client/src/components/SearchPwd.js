@@ -54,52 +54,84 @@ function SearchPwd() {
 
 
   return (
-    <Container maxWidth="xs">
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+    <Box
+      sx={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        margin: 0,
+        padding: 0,
+        backgroundImage: `url(${process.env.PUBLIC_URL}/image/main.png)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+      }}
+    >
+
+      {/* 오버레이 (원하면 유지 / 삭제 가능) */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(255,255,255,0.3)"
+        }}
+      />
+
+      {/* 기존 Container → 위치만 변경, 내부 구조는 유지 */}
+      <Container maxWidth="xs" sx={{ position: "relative", zIndex: 1 }}>
         <Paper elevation={4} sx={{ p: 4, borderRadius: 3, width: '100%' }}>
-        <Typography variant="h5" gutterBottom>
-          비밀번호 리셋
-        </Typography>
-        
-        {/* TextField는 inputRef 써야함(?) */}
-        <TextField inputRef={idRef} label="가입한 아이디" variant="outlined" margin="normal" fullWidth />
-        <TextField
-          inputRef={emailRef}
-          label="이메일"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-        />
-        <Button onClick={()=>{
-            let param = {
-                userId : idRef.current.value,
-                email : emailRef.current.value
-            };
+          <Typography variant="h5" gutterBottom>
+            비밀번호 리셋
+          </Typography>
+          
+          {/* TextField는 inputRef 써야함(?) */}
+          <TextField inputRef={idRef} label="가입한 아이디" variant="outlined" margin="normal" fullWidth />
+          <TextField
+            inputRef={emailRef}
+            label="이메일"
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
 
-            fetch("http://localhost:3010/user/searchpwd", {
-                method : "POST",
-                // 검증용 민감정보라 POST
-                headers : {"Content-type" : "application/json"},
-                body : JSON.stringify(param) 
-                // JSON 형태로 타입을 변환하여 보내주는 것임
-            })                    
-              .then( res => res.json() )
-              .then( data => {
-                  if (data.exists) {
-                    setAccountVerified(true); // 새 비밀번호 영역 노출
-                    setMessage(''); // 메시지 초기화
-                    //localStorage.setItem("token", data.token); // 토큰 저장
-                } else {
-                    setAccountVerified(false);
-                    setMessage(data.msg || "계정 정보를 확인해주세요.");
-                }
-              });
+          <Button onClick={()=>{
+              let param = {
+                  userId : idRef.current.value,
+                  email : emailRef.current.value
+              };
 
-        }} variant="contained" fullWidth color="primary" style={{ marginTop: '20px' }}>
-          계정 찾기
-        </Button>
-        
-        {/* 메시지 출력 */}
+              fetch("http://localhost:3010/user/searchpwd", {
+                  method : "POST",
+                  // 검증용 민감정보라 POST
+                  headers : {"Content-type" : "application/json"},
+                  body : JSON.stringify(param) 
+                  // JSON 형태로 타입을 변환하여 보내주는 것임
+              })                    
+                .then( res => res.json() )
+                .then( data => {
+                    if (data.exists) {
+                      setAccountVerified(true); // 새 비밀번호 영역 노출
+                      setMessage(''); // 메시지 초기화
+                  } else {
+                      setAccountVerified(false);
+                      setMessage(data.msg || "계정 정보를 확인해주세요.");
+                  }
+                });
+
+          }} variant="contained" fullWidth color="primary" style={{ marginTop: '20px' }}>
+            계정 찾기
+          </Button>
+          
+          {/* 메시지 출력 */}
           {message && (
             <Typography variant="body2" color="error" align="center" mt={1}>
               {message}
@@ -132,10 +164,11 @@ function SearchPwd() {
               > 변경하기 </Button>
 
             </Box>
-            )}
+          )}
+
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 }
 

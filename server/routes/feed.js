@@ -183,10 +183,18 @@ router.post('/upload', upload.array('file'), async (req, res) => {
 
 
 // 로그인 정보 기준 포스팅 목록(db에서 가져오기)
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', authMiddleware, async (req, res) => {
     let{userId} = req.params; 
+
+    // ⭐⭐ 1. authMiddleware를 통해 로그인된 사용자 ID를 가져옵니다.
+    const loggedInUserId = req.user.userId;
+
     try {
+
+        // ⭐⭐ 2. 요청된 userId와 로그인된 userId가 같은지 비교합니다.
+         const isOwner = String(userId) === String(loggedInUserId);
         
+    // 3. 쿼리 생성: isOwner가 true면 VISIBILITY 조건이 없고, false면 'P'만 조회합니다.
     let sql = `
         SELECT 
             P.POST_ID AS id, P.USER_ID AS userId, 
@@ -203,6 +211,7 @@ router.get('/:userId', async (req, res) => {
         LEFT JOIN PRO_TBL_POST_IMAGE I 
             ON P.POST_ID = I.POST_ID
         WHERE P.USER_ID = ?
+        ${isOwner ? '' : "AND P.VISIBILITY = 'P'"} 
         ORDER BY P.CDATETIME DESC 
     `;
         // DB 호출        
@@ -215,6 +224,7 @@ router.get('/:userId', async (req, res) => {
         })
     } catch (error) {
         console.log(error);
+        res.status(500).json({ result: "error", message: "서버 에러 발생" });
     } 
 })
 

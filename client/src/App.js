@@ -15,6 +15,7 @@ import CommentList from './components/CommentList';
 import Notification from './components/Notification';
 import Main from './components/Main';
 import ChatRoom from './components/ChatRoom';
+import UserEdit from './components/UserEdit';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Theme 설정
@@ -84,6 +85,7 @@ function App() {
             <Route path="/notification" element={<Notification />} />
             <Route path="/main" element={<Main />} />
             <Route path="/chat/:roomId" element={<ChatRoom />} />
+            <Route path="/useredit" element={<UserEdit />} />
           </Routes>
         </Box>
       </Box>

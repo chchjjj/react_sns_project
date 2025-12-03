@@ -28,7 +28,14 @@ function Feed() {
     const token = localStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
-      fetch("http://localhost:3010/feed/" + decoded.userId)
+      fetch("http://localhost:3010/feed/" + decoded.userId,
+
+        {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  }
+      )
         .then(res => res.json())
         .then(data => {
           setFeeds(data.list || []);
