@@ -163,4 +163,31 @@ router.get("/room-by-msg/:msgId", async (req, res) => {
 });
 
 
+// 특정 채팅방 정보 조회 (A/B 사용자ID 반환)
+// =======================================================
+router.get("/room/:roomId", async (req, res) => {
+  const { roomId } = req.params;
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT A_USER_ID, B_USER_ID
+       FROM PRO_TBL_DM_ROOM
+       WHERE ROOM_ID = ?`,
+      [roomId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "해당 채팅방을 찾을 수 없습니다." });
+    }
+
+    res.json(rows[0]); // { A_USER_ID: 3, B_USER_ID: 7 } 이런 형태로 반환
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "채팅방 정보 조회 실패" });
+  }
+});
+
+
+
 module.exports = router;
