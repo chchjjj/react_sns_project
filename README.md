@@ -43,10 +43,12 @@
 ![피드](https://github.com/chchjjj/react_sns_project/blob/main/images/feed.JPG)
 
 
-![피드상세](https://github.com/chchjjj/react_sns_project/blob/main/images/feedDetail.JPG)
+<div style="display: flex; flex-direction: row; justify-content: space-between; gap: 20px;">
+    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedDetail.JPG" alt="Feed Detail" style="height: 300px; object-fit: cover;">
+    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG" alt="Feed Image" style="height: 300px; object-fit: cover;">
+</div>
 
 
-![사진클릭](https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG)
  - 로그인 시 기본으로 사용자의 피드 목록 화면으로 이동함.
  - 공개여부 상관 없이 사용자의 모든 게시글이 조회되며, 5개씩 페이징 처리
  - 특정 게시글 클릭 시 모달창으로 사진, 내용, 댓글, 좋아요 기록 표시
