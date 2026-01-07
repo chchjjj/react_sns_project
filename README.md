@@ -90,10 +90,10 @@
 <table>
   <tr>
     <td align="center" width="40%">
-      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG" height="280"/>
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG" height="320"/>
     </td>
     <td align="center" width="60%">
-      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/alertCheck.JPG" height="280"/>
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/alertCheck.JPG" height="320"/>
     </td>
   </tr>
 </table>
