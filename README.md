@@ -87,8 +87,18 @@
 
 ***
 ### **4.  알림 기능**
-![알림](https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG)
-![알림체크](https://github.com/chchjjj/react_sns_project/blob/main/images/alertCheck.JPG)
+<table>
+  <tr>
+    <td align="center" width="40%">
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/alert.JPG" height="280"/>
+    </td>
+    <td align="center" width="60%">
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/alertCheck.JPG" height="280"/>
+    </td>
+  </tr>
+</table>
+
+
 - 다른 사용자가 내 게시글에 댓글을 남기거나 DM(다이렉트 메세지)을 보낸 경우,<br>
 알림 메뉴에 빨갛게 표시가 뜨며 확인하지 않은 알림은 노란색으로 구분되어 표시됨.
 - 알림 클릭 시 해당 화면으로 이동되고(채팅방 또는 댓글이 달린 게시물), 확인 시 메뉴의 빨간 표시 및 노란색 컬러 사라짐
