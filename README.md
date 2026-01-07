@@ -106,7 +106,10 @@
 
 ***
 ### **5.  채팅 기능**
-<img src="https://github.com/chchjjj/react_sns_project/blob/main/images/chatRoom.JPG" width="700"/>
+<p align="center">
+  <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/chatRoom.JPG" width="630"/>
+</p>
+
 
 - 유저 A와 유저 B간 처음 채팅 시 최초 1회 새로운 채팅방이 개설되며,<br>그 이후로는 해당 채팅방에서 메세지를 주고 받는다.
 - 상기 4번 기능대로, 메세지를 받은 사용자는 알림 확인 전까지 '알림' 메뉴에 빨갛게 표시가 뜬다.
