@@ -77,7 +77,7 @@
 
  ![랜덤2](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed2.JPG)
 <p align="center">
-  <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG" width="500"/>
+  <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG" width="460"/>
 </p>
 
 
