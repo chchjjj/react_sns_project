@@ -43,10 +43,11 @@
 ![피드](https://github.com/chchjjj/react_sns_project/blob/main/images/feed.JPG)
 
 
-<div style="display: flex; flex-direction: row; justify-content: space-between; gap: 20px;">
-    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedDetail.JPG" alt="Feed Detail" style="height: 300px; object-fit: cover;">
-    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG" alt="Feed Image" style="height: 300px; object-fit: cover;">
+<div style="display: flex; flex-direction: row; justify-content: space-between; gap: 20px; align-items: stretch;">
+    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedDetail.JPG" alt="Feed Detail" style="width: 45%; object-fit: cover;">
+    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG" alt="Feed Image" style="width: 45%; object-fit: cover;">
 </div>
+
 
 
  - 로그인 시 기본으로 사용자의 피드 목록 화면으로 이동함.
@@ -68,7 +69,10 @@
   
 
  ![랜덤2](https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed2.JPG)
-<img src="https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG" width="500"/>
+<p align="center">
+  <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/randomFeed3.JPG" width="500"/>
+</p>
+
 
 - 게시글 작성자 아이콘 클릭 시 해당 사용자의 피드 모아보기 & 상세보기 모달창 생성
 - 게시글 작성자의 비공개 게시글은 포함되어 있지 않음 (다른 사용자가 볼 때는 총 3개지만, 실제로는 5개)
