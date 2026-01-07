@@ -43,10 +43,17 @@
 ![피드](https://github.com/chchjjj/react_sns_project/blob/main/images/feed.JPG)
 
 
-<div style="display: flex; flex-direction: row; justify-content: space-between; gap: 20px;">
-    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedDetail.JPG" alt="Feed Detail" style="height: 300px; object-fit: cover;">
-    <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG" alt="Feed Image" style="height: 300px; object-fit: cover;">
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedDetail.JPG" height="300"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/feedImage.JPG" height="300"/>
+    </td>
+  </tr>
+</table>
+
 
 
 
