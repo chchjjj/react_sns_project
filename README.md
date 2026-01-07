@@ -124,12 +124,17 @@
 ### **7.  로그인, 회원가입, 비밀번호 재설정**
 ![로그인](https://github.com/chchjjj/react_sns_project/blob/main/images/login.JPG)
 ![회원가입](https://github.com/chchjjj/react_sns_project/blob/main/images/join.JPG)
-<table>
+<table width="100%">
   <tr>
-    <td><img src="https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset.JPG" width="320"/></td>
-    <td><img src="https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset2.JPG" width="320"/></td>
+    <td align="center" width="50%">
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset.JPG" width="100%"/>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://github.com/chchjjj/react_sns_project/blob/main/images/pwdReset2.JPG" width="100%"/>
+    </td>
   </tr>
 </table>
+
 
 - 아이디 중복확인, 아이디 & 비밀번호 정규식
 - 비밀번호 변경을 원할 경우 기본 정보를 통한 계정을 찾은 후 변경 가능
