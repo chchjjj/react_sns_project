@@ -26,11 +26,15 @@
 - 복잡한 사회 속에서 현대인들의 긍정적 루틴 형성과 서로에게 작은 위로가 되었으면 함
 ***
 ## 🛠 사용 기술
-- 언어 : JavaScript
-- 프론트앤드 : React, MUI
-- 백엔드 : Node.js, Express
-- 데이터베이스 : MySQL
-- 기타 : JWT(JSON Web Token), Bcrypt
+
+| 구분 | 기술 스택 |
+| :--- | :--- |
+| **Language** | ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) |
+| **Frontend** | ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![MUI](https://img.shields.io/badge/MUI-%230081CB.svg?style=for-the-badge&logo=mui&logoColor=white) |
+| **Backend** | ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) |
+| **Database** | ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white) |
+| **Auth & Security** | ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Bcrypt](https://img.shields.io/badge/Bcrypt-white?style=for-the-badge&logo=linux-foundation&logoColor=black) |
+
 ***
 ## 📌 주요 기능
 ### **1.  피드 기록**
