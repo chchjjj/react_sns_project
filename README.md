@@ -30,7 +30,7 @@
 - 프론트앤드 : React, MUI
 - 백엔드 : Node.js, Express
 - 데이터베이스 : MySQL
-- 기타 : JWT, Bcrypt
+- 기타 : JWT(JSON Web Token), Bcrypt
 ***
 ## 📌 주요 기능
 ### **1.  피드 기록**
